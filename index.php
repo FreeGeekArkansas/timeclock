@@ -83,7 +83,7 @@
 		<select name="name">
 <?php 
 if (!empty($list)) {
-    echo '<option value="'.$list["first_name"].' '.$list["middle_name"].' '.$list["last_name"]
+    echo '<option value="'.$list["first_name"].' '.$list["middle_name"].' '.$list["last_name"];
 }
 
 ?>		
