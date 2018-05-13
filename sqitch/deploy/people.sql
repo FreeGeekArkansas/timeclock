@@ -1,4 +1,4 @@
--- Deploy volunteer:people to pg
+-- Deploy timeclock:people to pg
 -- TODO
 -- state_other, state foreignkey ref
 -- emergency_relationship as foreignkey or enum
@@ -59,7 +59,7 @@ CREATE
         authentication(
             person_id INT REFERENCES people,
             username text,
-            pin VARCHAR(4),
+            pin text,
             password text,
             access_card text
         );
