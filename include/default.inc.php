@@ -37,3 +37,11 @@ function getRequest($key, $defaultValue = null) {
         return $defaultValue;
     }
 }
+
+function getSession($key, $defaultValue = null) {
+    if (isset($_SESSION[$key])) {
+        return $_SESSION[$key];
+    } else {
+        return $defaultValue;
+    }
+}
