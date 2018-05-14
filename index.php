@@ -1,4 +1,21 @@
 <?php
+/*
+Copyright (C) 2018  Jared H. Hudson
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 {
     /* TODO
      * check for session
@@ -74,23 +91,17 @@
 <head>
 <meta charset="utf-8">
 <link href="css/style.css" rel="stylesheet" type="text/css">
-<title>Timesheet</title>
+<title>Time clock</title>
 </head>
 <body>
 <div class="login">
-	<h1>Timesheet</h1>
-    <form method="post" enctype="application/x-www-form-urlencoded" action="login.php">
-		<select name="name">
-<?php 
-if (!empty($list)) {
-    echo '<option value="'.$list["first_name"].' '.$list["middle_name"].' '.$list["last_name"];
-}
-
-?>		
-		</select>
-<!--     	<input type="text" name="username" placeholder="Username" value="<?php echo $username; ?>" required="required" /><?php showError($username_error); ?> -->
-        <input type="password" name="password" placeholder="Password" required="required" /><?php showError($password_error); ?>
-        <button type="submit" name="submit" value="login" class="btn btn-primary btn-block btn-large">Login</button>
+	<h1>Time clock</h1>
+    <form method="post" enctype="application/x-www-form-urlencoded" action="index.php">
+     	<input type="text" name="username" placeholder="Username or Nickname" value="<?php echo $username; ?>" required="required" /><?php showError($username_error); ?> -->
+        <input type="password" name="password" placeholder="PIN or Password" required="required" /><?php showError($password_error); ?>
+        <button type="submit" name="submit" value="log in" class="btn btn-primary btn-block btn-large">Log in</button>
+        <br>
+        <a href="new.php" class="btn btn-primary btn-block btn-large">New Volunteer Application</a>
     </form>
 </div>
 </body>
