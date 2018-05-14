@@ -8,6 +8,7 @@ BEGIN;
 
 CREATE
     TYPE person_types AS ENUM(
+        'emergency contact',
         'customer',
         'guest',
         'volunteer',
@@ -31,8 +32,10 @@ CREATE
             address1 text,
             address2 text,
             city text,
-            state text,
+            state_id int REFERENCES states,
+            state_other text,
             zipcode text,
+            country_id int REFERENCES countries,
             phone text,
             email text,
             dob DATE,
