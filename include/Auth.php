@@ -11,18 +11,50 @@ class Auth {
             echo 'Error connecting to auth DB. Caught exception: [',  $e->getMessage(), "]\n";
             die();
         }
+        
+        $this->variables = array();
     }
     
     function list() {
         $stmt = $this->authdb->query("SELECT first_name,middle_name,last_name from people order by first_name,last_name,middle_name");
-        $results = $stmt->fetchAll();
-        $stmt->closeCursor();
-        $stmt = null;        
+        if ($stmt !== false) {
+            $results = $stmt->fetchAll();
+            $stmt->closeCursor();
+        } else {
+            $results = false;
+        }
+        
         return $results;        
     }
     
     function isValid($str) {
         return preg_match('/[A-Za-z0-9]/', $str);
+    }
+    
+    function apply() {
+        $keys = array('username','pin','password', 'password2');
+        
+        foreach ($keys as $i => $value) {
+            $this->variables[$value] = getRequest($value);
+        }
+        
+        if ($this->variables['password'] != $this->variables['password2']) {
+            $this->var_errors['password2'] = 'passwords do not match';
+        }
+    }
+    
+    function get($var) {
+        if (isset($this->variables[$var])) {
+            return $this->variables[$var];
+        }
+        return '';
+    }
+    
+    function error($var) {
+        if (isset($this->var_errors[$var])) {
+            return $this->var_errors[$var];
+        }
+        return '';
     }
     
     function authenticate($username, $password) {
