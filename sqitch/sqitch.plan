@@ -1,8 +1,9 @@
 %syntax-version=1.0.0
 %project=timeclock
 
+countries 2018-05-14T00:51:16Z jhhudso <jhhudso@ender> # Table of country names
+states 2018-05-14T00:53:01Z jhhudso <jhhudso@ender> # table of US states and territories
 people 2018-05-12T16:27:56Z jhhudso <jhhudso@volumehost.com> # table for people
 questions 2018-05-10T02:55:56Z jhhudso <jhhudso@volumehost.com> # table of questions
 answers 2018-05-10T03:00:39Z jhhudso <jhhudso@volumehost.com> # table of answers to questions by people
 timeclock 2018-05-10T03:04:22Z jhhudso <jhhudso@volumehost.com> # table for timeclock
-
