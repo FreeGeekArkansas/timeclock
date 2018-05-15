@@ -50,7 +50,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     // class is autoloaded from include/Auth.php
     $auth = new Auth();
     
-    if ($submit === 'login') {       
+    if ($submit === 'log in') {       
         try {
             $authorized = $auth->authenticate($username, $password);
         } catch (Exception $e) {
@@ -67,7 +67,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 header('Location: main.php');
                 exit();
             } else {
-                $password_error = 'Invalid password';
+                $password_error = 'Invalid PIN or password';
             }
         }
     }
