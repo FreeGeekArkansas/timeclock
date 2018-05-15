@@ -60,7 +60,7 @@ CREATE
  CREATE
     TABLE
         authentication(
-            person_id INT REFERENCES people,
+            person_id INT REFERENCES people PRIMARY key,
             username text,
             pin text,
             password text,
