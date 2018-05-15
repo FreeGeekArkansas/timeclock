@@ -38,6 +38,11 @@ class Auth {
             $this->variables[$value] = getRequest($value);
         }
         
+        $username_ok = $this->isValid($this->variables['username']);        
+        if ($username_ok === false) {
+            $this->var_errors['username'] = 'invalid username. Only A-Z, a-z or 0-9 allowed.';
+        }
+        
         if ($this->variables['password'] != $this->variables['password2']) {
             $this->var_errors['password2'] = 'passwords do not match';
         }
