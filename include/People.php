@@ -52,9 +52,9 @@ class People {
         return '';
     }
     
-    function showInput($name, $placeholder, $type = 'text', $required = false)
+    function showInput($name, $placeholder, $type = 'text', $required = false, $misc = '')
     {
-        echo '<input type="'.$type.'" name="'.$name.'" placeholder="'.$placeholder.'" value="'.$this->get($name).'" ';
+        echo '<input '.$misc.' type="'.$type.'" name="'.$name.'" placeholder="'.$placeholder.'" value="'.$this->get($name).'" ';
         if ($required === true) {
             echo 'required="required"'; 
         }
