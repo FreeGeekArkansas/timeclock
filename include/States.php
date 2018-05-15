@@ -33,10 +33,18 @@ class States {
         echo '<option value="" disabled="disabled" selected="selected">Please select a State</option>'."\n";
         echo '<option value="Arkansas">Arkansas</option>'."\n";
         echo '<option value="Oklohoma">Oklohoma</option>'."\n";
-        echo '<option value="Kansas">Kansas</option>'."\n";
+        echo '<option value="Kansas">Kansas</option>'."\n";        
         echo '<option value="" disabled="disabled">-----</option>'."\n";
         
         $state=getRequest('state', getSession('state'));
+        if ($state === 'Other') {
+            echo '<option value="Other" onselect="showother();" selected>A state or province not listed here</option>'."\n";            
+        } else {
+            echo '<option value="Other" onselect="showother();">A state or province not listed here</option>'."\n";
+        }
+        echo '<option value="" disabled="disabled">-----</option>'."\n";
+        
+        
         $keys = $this->list();
         foreach ($keys as $i => $value) {
             if ($state === $value[0]) {
