@@ -36,26 +36,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     session_start();
     
     // If user is already logged in then take them to the main page
-    if (isset($_SESSION['authorized']) && $_SESSION['authorized'] === true) {
+    if (getSession('authorized') === true) {
         header('Location: main.php');
         exit();
     }
     
-    if (isset($_REQUEST['username'])) {
-        $username = $_REQUEST['username'];
-    } else {
-        $username='';
-    }
-    
+    $username=getRequest('username');
+    $password=getRequest('password');
+    $submit=getRequest('submit');
     $username_error='';
     $password_error='';
     
     // class is autoloaded from include/Auth.php
     $auth = new Auth();
     
-    if (isset($_REQUEST['submit']) && $_REQUEST['submit'] == 'login') {       
+    if ($submit === 'login') {       
         try {
-            $authorized = $auth->authenticate($_REQUEST['username'], $_REQUEST['password']);
+            $authorized = $auth->authenticate($username, $password);
         } catch (Exception $e) {
             switch($e->getCode()) {
                 case 1: // username contained invalid characters
@@ -73,33 +70,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 $password_error = 'Invalid password';
             }
         }
-    } else {
-        try {
-            $list = $auth->list();
-        } catch (Exception $e) {
-            switch($e->getCode()) {
-                case 1: // username contained invalid characters
-                    $username_error = $e->getMessage();
-                    break;
-            }
-        }
     }
 }
 ?>
 <!DOCTYPE html>
-<html>
+<html class="login">
 <head>
 <meta charset="utf-8">
 <link href="css/style.css" rel="stylesheet" type="text/css">
 <title>Time clock</title>
 </head>
 <body>
-<div class="login">
+<div class="loginbox">
 	<h1>Time clock</h1>
     <form method="post" enctype="application/x-www-form-urlencoded" action="index.php">
-     	<input type="text" name="username" placeholder="Username or Nickname" value="<?php echo $username; ?>" required="required" /><?php showError($username_error); ?> -->
-        <input type="password" name="password" placeholder="PIN or Password" required="required" /><?php showError($password_error); ?>
-        <button type="submit" name="submit" value="log in" class="btn btn-primary btn-block btn-large">Log in</button>
+     	<input  type="text"     name="username" placeholder="Username" class="login"                               value="<?php echo $username; ?>" required="required" /><?php showError($username_error); ?>
+        <input  type="password" name="password" placeholder="PIN or Password"      class="login"                                                                required="required" /><?php showError($password_error); ?>
+        <button type="submit"   name="submit"                                      class="btn btn-primary btn-block btn-large" value="log in" >Log in</button>
         <br>
         <a href="new.php" class="btn btn-primary btn-block btn-large">New Volunteer Application</a>
     </form>
