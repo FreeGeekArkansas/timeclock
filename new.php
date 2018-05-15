@@ -41,6 +41,15 @@
 <meta charset="utf-8">
 <link href="css/style.css" rel="stylesheet" type="text/css">
 <title>Time clock</title>
+<script>
+function showStateOther() {
+	document.getElementById("state_other").style.display="initial";
+}
+function hideStateOther() {
+	document.getElementById("state_other").style.display="none";
+}
+
+</script>
 </head>
 <body>
 <div class="newbox">
@@ -63,7 +72,12 @@
     $people->showInput('zipcode', 'Zipcode');
        
     $states = new States();
-    $states->showList('class="label"');
+    $states->showList('class="label" onchange="if (this.selectedIndex==5) showStateOther(); else hideStateOther();"');
+    if ($people->get('state') == 'Other') {
+        $people->showInput('state_other', 'State (other)', 'text', false, 'class="label" id=state_other');
+    } else {
+        $people->showInput('state_other', 'State (other)', 'text', false, 'class="label" id=state_other style="display:none"');
+    }
     
     $countries = new Countries();
     $countries->showList('class="input"');
@@ -75,13 +89,9 @@
     $people->showInput('emergency_last_name', 'Last Name', 'text', false);
     $people->showInput('emergency_phone', 'Phone number', 'text', false);
     $people->showInput('emergency_relationship', 'Relationship', 'text', false);
-    
-    //            ,'guardian_first_name','guardian_middle_name', 'guardian_last_name','guardian_phone','guardian_relationship',
-    //            'emergency_first_name','emergency_middle_name', 'emergency_last_name','emergency_phone','emergency_relationship',
-    //            'type');
-    
+        
     $dob = $people->get('dob');
-    if ($dob !== null) {
+    if ($dob !== '') {
         $systemTimeZone = exec('date +%Z');
         $sysdtz = new DateTimeZone($systemTimeZone);
         
@@ -94,10 +104,10 @@
 ?>
             <h3 class="label">Guardian's Name and Phone number</h3>
 <?php 
-            $people->showInput('guardian_first_name', 'First Name', 'text', false);
+            $people->showInput('guardian_first_name', 'First Name', 'text', true);
             $people->showInput('guardian_middle_name', 'Middle Name', 'text', false);
             $people->showInput('guardian_last_name', 'Last Name', 'text', false);
-            $people->showInput('guardian_phone', 'Phone number', 'text', false);
+            $people->showInput('guardian_phone', 'Phone number', 'text', true);
             $people->showInput('guardian_relationship', 'Relationship', 'text', false);
 ?>
 <div class="label">Since you are not yet 18 we need to know who your parent or guardian is.</div>
