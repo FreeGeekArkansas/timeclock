@@ -8,4 +8,6 @@ CREATE
             name text
         );
 
+\COPY states (name) FROM 'deploy/states.csv'(FORMAT 'csv', HEADER TRUE);
+       
 COMMIT;
