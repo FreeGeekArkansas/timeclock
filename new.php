@@ -20,17 +20,23 @@
     include_once 'include/default.inc.php';
     session_start();
     
-    // classes are autoloaded from php files in include/ 
-    $auth = new Auth();
-    $people = new People();
+    // classes are autoloaded from php files in include/
+    $db = new DB();    
+    $auth = new Auth($db);
+    $people = new People($db);
 
     if (getRequest('submit') === "apply") {
-        $people_id = $people->apply();
-        $success = $auth->apply();        
-        if ($success === true and $people_id > 0) {
-            header('Location: questions.php');
-            exit();
-        }
+        $p_success = $people->apply();
+        $a_success = $auth->apply();
+        
+        if ($p_success && $a_success) {
+            $success = $db->commit();
+            if ($success === true) {
+                echo 'done';
+                //header('Location: questions.php');
+                //exit();
+            }            
+        }        
     }
 }
 ?>
