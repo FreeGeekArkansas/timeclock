@@ -45,11 +45,16 @@
 	padding: 10px;
 	display: none;
 }
-.error {
+.errorcenter {
     color: red;
     text-shadow: 0 0 10px rgba(0,0,0,0.3);
     letter-spacing: 1px;
     text-align: center;
+}
+.error {
+    color: red;
+    text-shadow: 0 0 10px rgba(0,0,0,0.3);
+    letter-spacing: 1px;
 }
 .nonerror {
     color: white;
