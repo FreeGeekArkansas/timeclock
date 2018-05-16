@@ -38,7 +38,14 @@ class People {
         
         foreach ($keys as $i => $value) {
             $this->variables[$value] = getRequest($value);
-        }        
+        }
+        if (getRequest('copy_emergency_guardian') === 'checked') {
+            $this->copy('emergency_first_name', 'guardian_first_name');
+            $this->copy('emergency_middle_name', 'guardian_middle_name');
+            $this->copy('emergency_last_name', 'guardian_last_name');
+            $this->copy('emergency_phone', 'guardian_phone');
+            $this->copy('emergency_relationship', 'guardian_relationship');
+        }
     }
     
     function get($var) {
@@ -48,13 +55,19 @@ class People {
         return '';
     }
     
+    function copy($src, $dst) {
+        if (isset($this->variables[$src])) {
+            $this->variables[$dst] = $this->variables[$src];
+        }        
+    }
+    
     function error($var) {
         return '';
     }
     
     function showInput($name, $placeholder, $type = 'text', $required = false, $misc = '')
     {
-        echo '<input '.$misc.' type="'.$type.'" name="'.$name.'" placeholder="'.$placeholder.'" value="'.$this->get($name).'" ';
+        echo '<input '.$misc.' type="'.$type.'" name="'.$name.'" id="'.$name.'" placeholder="'.$placeholder.'" value="'.$this->get($name).'" ';
         if ($required === true) {
             echo 'required="required"'; 
         }
