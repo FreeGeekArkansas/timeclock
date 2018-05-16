@@ -1,15 +1,35 @@
 <?php
+/*
+ Copyright (C) 2018  Jared H. Hudson
+ 
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+ 
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ 
+ You should have received a copy of the GNU General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 
 class Auth {        
-    function __construct() {
-        // Connect to POS and authorization databases      
-        
-        try {
-            global $dbconfig;
-            $this->authdb = new PDO($dbconfig['auth']['dsn'], $dbconfig['auth']['username'], $dbconfig['auth']['password'], $dbconfig['auth']['options']);
-        } catch(PDOException $e) {
-            echo 'Error connecting to auth DB. Caught exception: [',  $e->getMessage(), "]\n";
-            die();
+    function __construct(DB $db = null) {
+        if ($db === null || $db->authdb->getAttribute(PDO::ATTR_CONNECTION_STATUS) !== 'Connection OK; waiting to send.') {
+            try {
+                global $dbconfig;
+                $this->authdb = new PDO($dbconfig['auth']['dsn'], $dbconfig['auth']['username'], $dbconfig['auth']['password'], $dbconfig['auth']['options']);
+                $this->authdb->beginTransaction();
+            } catch(PDOException $e) {
+                echo 'Error connecting to auth DB. Caught exception: [',  $e->getMessage(), "]\n";
+                die();
+            }
+        } else {
+            $this->authdb = $db->authdb;
         }
         
         $this->variables = array();
@@ -38,14 +58,40 @@ class Auth {
             $this->variables[$value] = getRequest($value);
         }
         
-        $username_ok = $this->isValid($this->variables['username']);        
-        if ($username_ok === false) {
-            $this->var_errors['username'] = 'invalid username. Only A-Z, a-z or 0-9 allowed.';
+        $form_completed_status = true;
+        if (strlen($this->variables['username']) < 1 || strlen($this->variables['username']) > 8) {
+            $this->var_errors['username'] = 'username must be between 1 and 8 characters long.';
+            $form_completed_status = false;
+        } else {        
+            $username_ok = $this->isValid($this->variables['username']);        
+            if ($username_ok === false) {
+                $this->var_errors['username'] = 'invalid username. Only A-Z, a-z or 0-9 allowed.';
+                $form_completed_status = false;
+            }
         }
-        
+         
         if ($this->variables['password'] != $this->variables['password2']) {
             $this->var_errors['password2'] = 'passwords do not match';
+            $form_completed_status = false;
         }
+        
+        if (strlen($this->variables['password']) < 8) {
+            $this->var_errors['password'] = 'password must be at least 8 characters';
+            $form_completed_status = false;
+        }
+        
+        if (strlen($this->variables['pin']) !== 4) {
+            $this->var_errors['pin'] = 'PIN must be 4 characters long.';
+            $form_completed_status = false;
+        }
+        
+        $person_id = getSession('person_id');
+        if ($form_completed_status === true && is_numeric($person_id)) {
+            $stmt = $this->authdb->prepare('INSERT INTO authentication (person_id,username,password,pin) VALUES (?,?,?)');
+            $stmt->execute(array($person_id, $this->variables['username'], $this->variables['password'], $this->variables['pin']));
+        }
+        
+        return $form_completed_status;
     }
     
     function get($var) {
