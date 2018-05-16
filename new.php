@@ -24,11 +24,10 @@
     $auth = new Auth();
     $people = new People();
 
-    if (getRequest('submit') === "apply") {        
-        $person_id = $people->apply();
-        
+    if (getRequest('submit') === "apply") {
+        $people_id = $people->apply();
         $success = $auth->apply();        
-        if ($success === true) {
+        if ($success === true and $people_id > 0) {
             header('Location: questions.php');
             exit();
         }
@@ -48,7 +47,21 @@ function showStateOther() {
 function hideStateOther() {
 	document.getElementById("state_other").style.display="none";
 }
-
+function showCountryOther() {
+	document.getElementById("country_other").style.display="initial";
+}
+function hideCountryOther() {
+	document.getElementById("country_other").style.display="none";
+}
+function handleClick(cb) {
+	if (cb.checked) {
+		document.getElementById("guardian_first_name").value=document.getElementById("emergency_first_name").value;
+		document.getElementById("guardian_middle_name").value=document.getElementById("emergency_middle_name").value;
+		document.getElementById("guardian_last_name").value=document.getElementById("emergency_last_name").value;
+		document.getElementById("guardian_phone").value=document.getElementById("emergency_phone").value;
+		document.getElementById("guardian_relationship").value=document.getElementById("emergency_relationship").value;
+	}
+}
 </script>
 </head>
 <body>
@@ -80,7 +93,13 @@ function hideStateOther() {
     }
     
     $countries = new Countries();
-    $countries->showList('class="input"');
+    $countries->showList('class="label" onchange="if (this.selectedIndex==5) showCountryOther(); else hideCountryOther();"');
+    if ($people->get('country') === 'Other') {
+        $people->showInput('country_other', 'Country (other)', 'text', false, 'class="label" id=country_other');
+    } else {
+        $people->showInput('country_other', 'Country (other)', 'text', false, 'class="label" id=country_other style="display:none"');
+    }
+    
 ?>
 <h3 class="label">Emergency Contact's Name and Phone number</h3>
 <?php
@@ -103,14 +122,15 @@ function hideStateOther() {
         if ($age < 18) {
 ?>
             <h3 class="label">Guardian's Name and Phone number</h3>
-<?php 
+            <div class="label"><input type="checkbox" name="copy_emergency_guardian" value="checked" <?php echo getRequest('copy_emergency_guardian'); ?> onclick="handleClick(this);">Click to copy emergency contact information to guardian contact information.</div>
+<?php
             $people->showInput('guardian_first_name', 'First Name', 'text', true);
             $people->showInput('guardian_middle_name', 'Middle Name', 'text', false);
             $people->showInput('guardian_last_name', 'Last Name', 'text', false);
             $people->showInput('guardian_phone', 'Phone number', 'text', true);
-            $people->showInput('guardian_relationship', 'Relationship', 'text', false);
+            $people->showInput('guardian_relationship', 'Relationship', 'text', false);            
 ?>
-<div class="label">Since you are not yet 18 we need to know who your parent or guardian is.</div>
+<div class="label">Since you are not yet 18, Free Geek Arkansas needs to know who your parent or guardian is.</div>
 
 <?php
         }
