@@ -16,8 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-class People {        
+class People {
     function __construct(DB $db = null) {
         if ($db === null || $db->authdb->getAttribute(PDO::ATTR_CONNECTION_STATUS) !== 'Connection OK; waiting to send.') {
             try {
@@ -77,6 +76,23 @@ class People {
             }
         }
         
+        $dob = $this->get('dob');
+        if ($dob != '') {
+            $systemTimeZone = exec('date +%Z');
+            $sysdtz = new DateTimeZone($systemTimeZone);
+            
+            $dt = new DateTime($dob,$sysdtz);
+            $now = new DateTime(null,$sysdtz);
+            
+            $di = date_diff($dt, $now);
+            $this->variables['age'] = $di->y;
+            
+            global $coppa_age;
+            if ($this->variables['age'] < $coppa_age) {
+                return false;                
+            }
+        }
+        
         if ($form_completed_status === true) {
             $stmt = $this->authdb->prepare('INSERT INTO people (first_name,middle_name,last_name,address1,address2,city,state,state_other,zipcode,country,country_other,phone,email,dob,guardian_first_name,guardian_middle_name, guardian_last_name,guardian_phone,guardian_relationship,emergency_first_name,emergency_middle_name, emergency_last_name,emergency_phone,emergency_relationship) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)');
 
@@ -92,12 +108,15 @@ class People {
             $success = $stmt->execute($vars);
             if ($success === true) {
                 $_SESSION['person_id'] = lastInsertId();
+                return true;
             } else {
+                // Failed to insert records into DB
                 return false;
             }
         }
         
-        return $form_completed_status;
+        // Failed to complete form correctly
+        return false;
     }
     
     function get($var) {
