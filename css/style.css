@@ -72,6 +72,7 @@
 
 html.login { width: 100%; height:100%; overflow:hidden; }
 html.new { width: 100%; height:100%; overflow-x:hidden; }
+html.coppa { width: 100%; height:100%; }
 
 body { 
 	width: 100%;
