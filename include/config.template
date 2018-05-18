@@ -6,3 +6,12 @@ $dbconfig['auth']['dsn'] = 'pgsql:dbname=dbname;host=dbserver';
 $dbconfig['auth']['username'] = '';
 $dbconfig['auth']['password'] = '';
 $dbconfig['auth']['options'] = array(PDO::ATTR_PERSISTENT => true);
+
+// we need guardian information and consent for anyone younger than this age to volunteer
+$age_of_majority=18;
+
+// we need verified consent to store information about a minor less than this age due to COPPA
+$coppa_age=13;
+
+$contact_phone='1-479-966-9512';
+$contact_email='info@freegeekarkansas.org';
