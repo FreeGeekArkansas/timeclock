@@ -23,10 +23,18 @@
     // classes are autoloaded from php files in include/
     $db = new DB();    
     $auth = new Auth($db);
-    $people = new People($db);
-
+    $people = new People($db);            
+    
     if (getRequest('submit') === "apply") {
         $p_success = $people->apply();
+        if ($p_success === false) {
+            global $coppa_age;
+            if ($people->get('age') < $coppa_age) {
+                header('Location: coppa.php');
+                exit;
+            }
+        }
+        
         $a_success = $auth->apply();
         
         if ($p_success && $a_success) {
@@ -112,7 +120,7 @@ function handleClick(cb) {
     $people->showInput('emergency_first_name', 'First Name', 'text', true);
     $people->showInput('emergency_middle_name', 'Middle Name', 'text', false);
     $people->showInput('emergency_last_name', 'Last Name', 'text', false);
-    $people->showInput('emergency_phone', 'Phone number', 'text', false);
+    $people->showInput('emergency_phone', 'Phone number', 'text', true);
     $people->showInput('emergency_relationship', 'Relationship', 'text', false);
         
     $dob = $people->get('dob');
@@ -125,7 +133,7 @@ function handleClick(cb) {
         
         $di = date_diff($dt, $now);
         $age = $di->y;
-        if ($age < 18) {
+        if ($age < $age_of_majority) {
 ?>
             <h3 class="label">Guardian's Name and Phone number</h3>
             <div class="label"><input type="checkbox" name="copy_emergency_guardian" value="checked" <?php echo getRequest('copy_emergency_guardian'); ?> onclick="handleClick(this);">Click to copy emergency contact information to guardian contact information.</div>
@@ -136,7 +144,7 @@ function handleClick(cb) {
             $people->showInput('guardian_phone', 'Phone number', 'text', true);
             $people->showInput('guardian_relationship', 'Relationship', 'text', false);            
 ?>
-<div class="label">Since you are not yet 18, Free Geek Arkansas needs to know who your parent or guardian is.</div>
+<div class="label">Since you are not yet <?php echo $age_of_majority; ?>, Free Geek Arkansas needs to know who your parent or guardian is.</div>
 
 <?php
         }
@@ -150,7 +158,7 @@ function handleClick(cb) {
      	<p>
      	<input type="password" name="password" placeholder="Password" value="<?php echo $auth->get('password'); ?>" required="required" /><?php showError($auth->error('password')); ?>
         <input type="password" name="password2" placeholder="Repeat password" value="<?php echo $auth->get('password2'); ?>" required="required" /><?php showError($auth->error('password2')); ?>
-        <div class="label">Your password is used to authenticate you when you want to change your information.</div></p>
+        <div class="label">Your password is used to authenticate you when you want to change your information.</div>
         <button type="submit" name="submit" value="apply" class="btn btn-primary btn-block btn-large">Apply</button>        
     </form>
 </div>
