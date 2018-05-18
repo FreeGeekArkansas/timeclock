@@ -16,7 +16,6 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 class Auth {        
     function __construct(DB $db = null) {
         if ($db === null || $db->authdb->getAttribute(PDO::ATTR_CONNECTION_STATUS) !== 'Connection OK; waiting to send.') {
