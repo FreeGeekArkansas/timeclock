@@ -22,8 +22,8 @@
     
     // classes are autoloaded from php files in include/
     $db = new DB();    
-    $auth = new Auth($db);
-    $people = new People($db);            
+    $auth = new Auth($db->authdb);
+    $people = new People($db->authdb);            
     
     if (getRequest('submit') === "apply") {
         $p_success = $people->apply();
@@ -40,11 +40,18 @@
         if ($p_success && $a_success) {
             $success = $db->commit();
             if ($success === true) {
-                echo 'done';
-                //header('Location: questions.php');
-                //exit();
-            }            
-        }        
+                header('Location: questions.php');
+                exit();
+            } else {
+                if ($db->authdb->inTransaction()) {
+                    $db->authdb->rollBack();
+                }
+            }
+        } else {
+            if ($db->authdb->inTransaction()) {
+                $db->authdb->rollBack();
+            }
+        }
     }
 }
 ?>
@@ -98,7 +105,7 @@ function handleClick(cb) {
     $people->showInput('city', 'City');
     $people->showInput('zipcode', 'Zipcode');
        
-    $states = new States();
+    $states = new States($db->authdb);
     $states->showList('class="label" onchange="if (this.selectedIndex==5) showStateOther(); else hideStateOther();"');
     if ($people->get('state') == 'Other') {
         $people->showInput('state_other', 'State (other)', 'text', false, 'class="label" id=state_other');
@@ -106,7 +113,7 @@ function handleClick(cb) {
         $people->showInput('state_other', 'State (other)', 'text', false, 'class="label" id=state_other style="display:none"');
     }
     
-    $countries = new Countries();
+    $countries = new Countries($db->authdb);
     $countries->showList('class="label" onchange="if (this.selectedIndex==5) showCountryOther(); else hideCountryOther();"');
     if ($people->get('country') === 'Other') {
         $people->showInput('country_other', 'Country (other)', 'text', false, 'class="label" id=country_other');
@@ -122,7 +129,9 @@ function handleClick(cb) {
     $people->showInput('emergency_last_name', 'Last Name', 'text', false);
     $people->showInput('emergency_phone', 'Phone number', 'text', true);
     $people->showInput('emergency_relationship', 'Relationship', 'text', false);
-        
+?>
+    <span class="error"><?php echo $people->error('emergency'); ?></span>
+<?php
     $dob = $people->get('dob');
     if ($dob !== '') {
         $systemTimeZone = exec('date +%Z');
@@ -145,6 +154,7 @@ function handleClick(cb) {
             $people->showInput('guardian_relationship', 'Relationship', 'text', false);            
 ?>
 <div class="label">Since you are not yet <?php echo $age_of_majority; ?>, Free Geek Arkansas needs to know who your parent or guardian is.</div>
+<span class="error"><?php echo $people->error('guardian'); ?></span>
 
 <?php
         }
@@ -158,9 +168,11 @@ function handleClick(cb) {
      	<p>
      	<input type="password" name="password" placeholder="Password" value="<?php echo $auth->get('password'); ?>" required="required" /><?php showError($auth->error('password')); ?>
         <input type="password" name="password2" placeholder="Repeat password" value="<?php echo $auth->get('password2'); ?>" required="required" /><?php showError($auth->error('password2')); ?>
+	    <span class="error"><?php echo $auth->error('auth'); ?></span>        
         <div class="label">Your password is used to authenticate you when you want to change your information.</div>
         <button type="submit" name="submit" value="apply" class="btn btn-primary btn-block btn-large">Apply</button>        
     </form>
+    <span class="error"><?php echo $people->error('people'); ?></span>
 </div>
 </body>
 </html>
