@@ -40,6 +40,7 @@
         if ($p_success && $a_success) {
             $success = $db->commit();
             if ($success === true) {
+                $_SESSION['authorized'] = true;
                 header('Location: questions.php');
                 exit();
             } else {
