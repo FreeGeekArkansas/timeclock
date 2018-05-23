@@ -17,21 +17,9 @@
  */
 
 class Auth {        
-    function __construct(DB $db = null) {
-        if ($db === null || $db->authdb->getAttribute(PDO::ATTR_CONNECTION_STATUS) !== 'Connection OK; waiting to send.') {
-            try {
-                global $dbconfig;
-                $this->authdb = new PDO($dbconfig['auth']['dsn'], $dbconfig['auth']['username'], $dbconfig['auth']['password'], $dbconfig['auth']['options']);
-                $this->authdb->beginTransaction();
-            } catch(PDOException $e) {
-                echo 'Error connecting to auth DB. Caught exception: [',  $e->getMessage(), "]\n";
-                die();
-            }
-        } else {
-            $this->authdb = $db->authdb;
-        }
-        
-        $this->variables = array();
+    function __construct(PDO &$authdb) {
+        $this->authdb = &$authdb;       
+        $this->variables = array();        
     }
     
     function list() {
@@ -85,9 +73,21 @@ class Auth {
         }
         
         $person_id = getSession('person_id');
-        if ($form_completed_status === true && is_numeric($person_id)) {
-            $stmt = $this->authdb->prepare('INSERT INTO authentication (person_id,username,password,pin) VALUES (?,?,?)');
-            $stmt->execute(array($person_id, $this->variables['username'], $this->variables['password'], $this->variables['pin']));
+        if (!is_numeric($person_id)) {
+            $form_completed_status = false;            
+        }
+        
+        if ($form_completed_status === true) {
+            echo 'found';
+            $stmt = $this->authdb->prepare('INSERT INTO authentication (person_id,username,password,pin) VALUES (?,?,?,?)');
+            $success = $stmt->execute(array($person_id, $this->variables['username'], $this->variables['password'], $this->variables['pin']));
+            if ($success === true) {
+                return true;
+            } else {
+                $error = $stmt->errorInfo();
+                $this->var_errors['auth'] = $error[0].' '.$error[1].' '.$error[2];
+                return false;
+            }            
         }
         
         return $form_completed_status;
