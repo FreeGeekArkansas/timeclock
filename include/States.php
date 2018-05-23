@@ -18,17 +18,8 @@
 
 
 class States {        
-    function __construct() {
-        // Connect to POS and authorization databases      
-        
-        try {
-            global $dbconfig;
-            $this->authdb = new PDO($dbconfig['auth']['dsn'], $dbconfig['auth']['username'], $dbconfig['auth']['password'], $dbconfig['auth']['options']);
-        } catch(PDOException $e) {
-            echo 'Error connecting to auth DB. Caught exception: [',  $e->getMessage(), "]\n";
-            die();
-        }
-        
+    function __construct(PDO &$authdb) {
+        $this->authdb =& $authdb;
         $this->variables = array();
     }
     
@@ -39,7 +30,6 @@ class States {
             $stmt->closeCursor();
         } else {
             $results = false;
-            print_r($this->authdb->errorInfo());
         }
         
         return $results;        
@@ -80,5 +70,22 @@ class States {
             }
         }
         echo "</select>\n";        
+    }
+    
+    function lookup($name) {
+        static $state_id = 0;
+        
+        if ($state_id === 0) {
+            $stmt = $this->authdb->prepare('SELECT state_id FROM states where name = ?;');
+            $vars = array();
+            array_push($vars, $name);
+            $success = $stmt->execute($vars);
+            if ($success === true) {
+                $result = $stmt->fetch(PDO::FETCH_OBJ);
+                $state_id = $result->state_id;
+            }
+        }
+        
+        return $state_id;
     }
 }
