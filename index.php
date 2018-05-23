@@ -48,7 +48,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     $password_error='';
     
     // class is autoloaded from include/Auth.php
-    $auth = new Auth();
+    $db = new DB();
+    $auth = new Auth($db->authdb);
     
     if ($submit === 'log in') {       
         try {
