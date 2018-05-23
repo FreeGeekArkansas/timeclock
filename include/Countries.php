@@ -18,17 +18,8 @@
 
 
 class Countries {        
-    function __construct() {
-        // Connect to POS and authorization databases      
-        
-        try {
-            global $dbconfig;
-            $this->authdb = new PDO($dbconfig['auth']['dsn'], $dbconfig['auth']['username'], $dbconfig['auth']['password'], $dbconfig['auth']['options']);
-        } catch(PDOException $e) {
-            echo 'Error connecting to auth DB. Caught exception: [',  $e->getMessage(), "]\n";
-            die();
-        }
-        
+    function __construct(PDO &$authdb) {
+        $this->authdb =& $authdb;
         $this->variables = array();
     }
     
@@ -39,7 +30,6 @@ class Countries {
             $stmt->closeCursor();
         } else {
             $results = false;
-            print_r($this->authdb->errorInfo());
         }
         
         return $results;        
@@ -79,5 +69,22 @@ class Countries {
             }
         }
         echo "</select>\n";        
+    }
+    
+    function lookup($name) {
+        static $country_id = 0;
+        
+        if ($country_id === 0) {
+            $stmt = $this->authdb->prepare('SELECT country_id FROM countries where name = ?;');
+            $vars = array();
+            array_push($vars, $name);
+            $success = $stmt->execute($vars);
+            if ($success === true) {
+                $result = $stmt->fetch(PDO::FETCH_OBJ);
+                $country_id = $result->country_id;
+            }
+        }
+        
+        return $country_id;
     }
 }
