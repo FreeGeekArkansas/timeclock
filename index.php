@@ -18,10 +18,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 {
     /* TODO
-     * check for session
-     * connect to db
-     * get list of volunteers
-     * show list of volunteers in drop down menu
      * if volunteer selected, see if volunteer is clocked in or out
      * if clocked in, allow clock out
      * if clocked out, allow clock in
@@ -37,7 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     
     // If user is already logged in then take them to the main page
     if (getSession('authorized') === true) {
-        header('Location: main.php');
+        header('Location: questions.php');
         exit();
     }
     
@@ -65,7 +61,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         if (isset($authorized)) {
             if ($authorized === true) {
                 $_SESSION['authorized'] = true;
-                header('Location: main.php');
+                header('Location: questions.php');
                 exit();
             } else {
                 $password_error = 'Invalid PIN or password';
