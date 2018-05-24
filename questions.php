@@ -21,12 +21,38 @@
     session_start();
     
     // If user is not already logged in then take them to login page
-    if (getSession('authorized') != 1) {         
-        header('Location: login.php');
+    if (getSession('authorized') == false) {         
+        header('Location: index.php');
         exit();
     }
     
+    $db = new DB();
+    $q = new Questions($db->authdb, getSession('person_id'));
+    if ($q->newQuestions() == false) {
+        header('Location: timeclock.php');
+        exit();
+    }
+    //$a = new Answers($db->authdb, getSession('person_id'));
     
+    if (getRequest('submit') === "Apply") {
+        $q_success = $q->apply();
+        
+        if ($q_success) {
+            $success = $db->commit();
+            if ($success === true) {                
+                header('Location: timeclock.php');
+                exit();
+            } else {
+                if ($db->authdb->inTransaction()) {
+                    $db->authdb->rollBack();
+                }
+            }
+        } else {
+            if ($db->authdb->inTransaction()) {
+                $db->authdb->rollBack();
+            }
+        }
+    }    
 }
 ?>
 <!DOCTYPE html>
@@ -38,6 +64,39 @@
 </head>
 <script></script>
 <body>
+<a href="logout.php" class="btn btn-primary btn-block btn-large" style="width: 250px">Log out</a>
+<div class="newbox">
+<h2>Questions</h2>
+    <form method="post" enctype="application/x-www-form-urlencoded" action="questions.php">
+<?php 
+{
+    //print_r($q->questions);
+    foreach ($q->questions as $value) {
+        echo '<h3>'.$value['question']."</h3>\n";
+        echo $value[0];
+        switch ($value['answer_type']) {
+            case 'boolean':
+                echo '<div class="nonerror" style="text-align: center">';
+                echo '<b>Yes</b><input type="radio" name='.$value[0]." value=Yes>\n";
+                echo '<b>No</b><input type="radio" name='.$value[0]." value=No>\n";
+                echo $q->error($value[0]);
+                echo '</div>';
+                break;
+            case 'text':
+                echo '<div class="nonerror" style="text-align: center">';
+                echo '<textarea name='.$value[0]." cols=80 rows=5></textarea>\n";
+                echo '</div>';
+                break;
+        }
+    }
+    
+}    
+?>
+     <button type="submit" name="submit" value="Apply" class="btn btn-primary btn-block btn-large">Apply</button>        
+    </form>
+    <span class="error"><?php echo $q->error('questions'); ?></span>
+	</form>
+</div>
 </body>
 <script></script>
 </html>
