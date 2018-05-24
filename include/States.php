@@ -17,7 +17,7 @@
  */
 
 
-class States {        
+class States extends Form {        
     function __construct(PDO &$authdb) {
         $this->authdb =& $authdb;
         $this->variables = array();
