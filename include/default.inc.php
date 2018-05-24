@@ -46,7 +46,7 @@ function showError($msg) {
     }
 }
 
-function getRequest($key, $defaultValue = '') {
+function &getRequest($key, $defaultValue = '') {
     if (isset($_REQUEST[$key])) {
         return $_REQUEST[$key];
     } else {
@@ -54,7 +54,7 @@ function getRequest($key, $defaultValue = '') {
     }
 }
 
-function getSession($key, $defaultValue = '') {
+function &getSession($key, $defaultValue = '') {
     if (isset($_SESSION[$key])) {
         return $_SESSION[$key];
     } else {
