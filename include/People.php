@@ -16,7 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-class People {
+class People extends Form {
     function __construct(PDO &$authdb) {
         $this->authdb =& $authdb;
         $this->variables = array();
@@ -33,11 +33,7 @@ class People {
         
         return $results;        
     }
-    
-    function isValid($str) {
-        return preg_match('/[A-Za-z0-9]/', $str);
-    }
-        
+            
     function apply() {
         $keys = array('first_name','middle_name','last_name','address1','address2','city','state','state_other','zipcode','country','country_other','phone',
             'email','dob','guardian_first_name','guardian_middle_name', 'guardian_last_name','guardian_phone','guardian_relationship',
@@ -173,27 +169,7 @@ class People {
         // Failed to complete form correctly
         return false;
     }
-    
-    function get($var) {
-        if (isset($this->variables[$var])) {
-            return $this->variables[$var];
-        }
-        return '';
-    }
-    
-    function copy($src, $dst) {
-        if (isset($this->variables[$src])) {
-            $this->variables[$dst] = $this->variables[$src];
-        }        
-    }
-    
-    function error($var) {
-        if (isset($this->var_errors[$var])) {
-            return $this->var_errors[$var];
-        }
-        return '';
-    }
-    
+        
     function showInput($name, $placeholder, $type = 'text', $required = false, $misc = '')
     {
         echo '<input '.$misc.' type="'.$type.'" name="'.$name.'" id="'.$name.'" placeholder="'.$placeholder.'" value="'.$this->get($name).'" ';
