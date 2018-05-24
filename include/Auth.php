@@ -16,7 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-class Auth {        
+class Auth extends Form {        
     function __construct(PDO &$authdb) {
         $this->authdb = &$authdb;       
         $this->variables = array();        
@@ -33,11 +33,7 @@ class Auth {
         
         return $results;        
     }
-    
-    function isValid($str) {
-        return preg_match('/[A-Za-z0-9]/', $str);
-    }
-    
+        
     function apply() {
         $keys = array('username','pin','password', 'password2');
         
@@ -94,21 +90,7 @@ class Auth {
         
         return $form_completed_status;
     }
-    
-    function get($var) {
-        if (isset($this->variables[$var])) {
-            return $this->variables[$var];
-        }
-        return '';
-    }
-    
-    function error($var) {
-        if (isset($this->var_errors[$var])) {
-            return $this->var_errors[$var];
-        }
-        return '';
-    }
-    
+        
     function authenticate($username, $password) {
         if (!$this->isValid($username)) {
             throw new Exception("invalid username", 1);
