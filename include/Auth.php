@@ -80,7 +80,9 @@ class Auth {
         if ($form_completed_status === true) {
             echo 'found';
             $stmt = $this->authdb->prepare('INSERT INTO authentication (person_id,username,password,pin) VALUES (?,?,?,?)');
-            $success = $stmt->execute(array($person_id, $this->variables['username'], $this->variables['password'], $this->variables['pin']));
+            $hashed_password = password_hash($this->variables['password'], PASSWORD_DEFAULT, array('cost' => 12));
+            $hashed_pin = password_hash($this->variables['pin'], PASSWORD_DEFAULT, array('cost' => 12));
+            $success = $stmt->execute(array($person_id, $this->variables['username'], $hashed_password, $hashed_pin));
             if ($success === true) {
                 return true;
             } else {
@@ -112,20 +114,23 @@ class Auth {
             throw new Exception("invalid username", 1);
         }
         
-        $stmt = $this->authdb->prepare("SELECT username,firstname,lastname,passwd from ost_staff where username = :username");
+        $stmt = $this->authdb->prepare("SELECT * FROM authentication where username = :username LIMIT 1");
         $stmt->execute(array(':username' => $username));
-        
+
         foreach($stmt as $row) {
-            echo $row['username'] . " " . $row['firstname'] . " " . $row['lastname'] . " " . $row['passwd'] . " " . "<br>\n";
-            if (crypt($password, $row['passwd']) == $row['passwd']) {
+            if (password_verify($password, $row['password'])) {
                 $stmt->closeCursor();
-                $stmt = null;
+                $_SESSION['password_used'] = true;
                 return true;
             }
+            if (password_verify($password, $row['pin'])) {
+                $stmt->closeCursor();
+                $_SESSION['pin_used'] = true;
+                return true;
+            }            
         }
-        $stmt->closeCursor();
-        $stmt = null;
         
+        $stmt->closeCursor();       
         return false;
     }
 }
