@@ -18,6 +18,7 @@
 
 class Form {
     function __construct() {
+        $this->var_errors = Array();
     }
     
     function isValid($str) {
@@ -43,6 +44,10 @@ class Form {
         }
         
         return $errstring;
-    }    
+    }
+    
+    function setError($key, $value) {
+        $this->var_errors[$key] = $value;
+    }
 }
 ?>
