@@ -32,7 +32,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     session_start();
     
     // If user is already logged in then take them to the main page
-    if (getSession('authorized') === true) {
+    if (authorized() === true) {
         header('Location: questions.php');
         exit();
     }
@@ -59,8 +59,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         }
         
         if (isset($authorized)) {
-            if ($authorized === true) {
-                $_SESSION['authorized'] = true;
+            if ($authorized === true) {                
                 header('Location: questions.php');
                 exit();
             } else {
