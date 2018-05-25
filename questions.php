@@ -19,13 +19,13 @@
 {
     include_once 'include/default.inc.php';
     session_start();
-    
+
     // If user is not already logged in then take them to login page
-    if (getSession('authorized') == false) {         
+    if (authorized() == false) {         
         header('Location: index.php');
         exit();
     }
-    
+
     $db = new DB();
     $q = new Questions($db->authdb, getSession('person_id'));
     if ($q->newQuestions() == false) {
@@ -72,22 +72,32 @@
 {
     //print_r($q->questions);
     foreach ($q->questions as $value) {
-        echo '<h3>'.$value['question']."</h3>\n";
-        echo $value[0];
+        echo '<h3>'.$value[0].'. '.$value['question']."</h3>\n";
+
         switch ($value['answer_type']) {
             case 'boolean':
                 echo '<div class="nonerror" style="text-align: center">';
-                echo '<b>Yes</b><input type="radio" name='.$value[0]." value=Yes>\n";
-                echo '<b>No</b><input type="radio" name='.$value[0]." value=No>\n";
-                echo $q->error($value[0]);
+                echo $value['bool_answer'];
+                echo '<b>Yes</b><input type="radio" name='.$value[0].' value=Yes';
+                if ($value['bool_answer'] == true) {
+                    echo 'checked';
+                }
+                echo ">\n";
+                echo '<b>No</b><input type="radio" name='.$value[0].' value=No';
+                if ($value['bool_answer'] == false) {
+                    echo 'checked';
+                }
+                echo ">\n";
+                echo '<span class="error">'.$q->error($value[0])."</span>\n";
                 echo '</div>';
                 break;
             case 'text':
-                echo '<div class="nonerror" style="text-align: center">';
-                echo '<textarea name='.$value[0]." cols=80 rows=5></textarea>\n";
+                echo '<div style="text-align: center">';
+                echo '<textarea name='.$value[0].' cols=80 rows=5>'.$value['text_answer']."</textarea>\n";
                 echo '</div>';
                 break;
         }
+        
     }
     
 }    
