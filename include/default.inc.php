@@ -61,3 +61,10 @@ function &getSession($key, $defaultValue = '') {
         return $defaultValue;
     }
 }
+
+function authorized() {
+    if (getSession('authorized') == true && getSession('person_id') > 0) {
+        return true;
+    }
+    return false;
+}
