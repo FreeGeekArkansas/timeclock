@@ -74,7 +74,6 @@ class Auth extends Form {
         }
         
         if ($form_completed_status === true) {
-            echo 'found';
             $stmt = $this->authdb->prepare('INSERT INTO authentication (person_id,username,password,pin) VALUES (?,?,?,?)');
             $hashed_password = password_hash($this->variables['password'], PASSWORD_DEFAULT, array('cost' => 12));
             $hashed_pin = password_hash($this->variables['pin'], PASSWORD_DEFAULT, array('cost' => 12));
@@ -103,11 +102,15 @@ class Auth extends Form {
             if (password_verify($password, $row['password'])) {
                 $stmt->closeCursor();
                 $_SESSION['password_used'] = true;
+                $_SESSION['authorized'] = true;
+                $_SESSION['person_id'] = $row['person_id'];
                 return true;
             }
             if (password_verify($password, $row['pin'])) {
                 $stmt->closeCursor();
                 $_SESSION['pin_used'] = true;
+                $_SESSION['authorized'] = true;
+                $_SESSION['person_id'] = $row['person_id'];
                 return true;
             }            
         }
