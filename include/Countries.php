@@ -17,7 +17,7 @@
  */
 
 
-class Countries {        
+class Countries extends Form {        
     function __construct(PDO &$authdb) {
         $this->authdb =& $authdb;
         $this->variables = array();
@@ -68,11 +68,18 @@ class Countries {
                 echo '<option value="'.$value[0].'">'.$value[0]."</option>\n";
             }
         }
-        echo "</select>\n";        
+        echo "</select>\n";
+        showError($this->error('country'));
     }
     
     function lookup($name) {
         static $country_id = 0;
+        
+        if (empty($name)) {
+            $this->var_errors['country'] = 'country required';
+            $country_id = 0;
+            return 0;
+        }
         
         if ($country_id === 0) {
             $stmt = $this->authdb->prepare('SELECT country_id FROM countries where name = ?;');
@@ -81,7 +88,12 @@ class Countries {
             $success = $stmt->execute($vars);
             if ($success === true) {
                 $result = $stmt->fetch(PDO::FETCH_OBJ);
-                $country_id = $result->country_id;
+                if ($result === FALSE) {                    
+                    $this->var_errors['country'] = 'Country \''.$name.'\' unrecognized.';
+                    $country_id = 0;
+                } else {
+                    $country_id = $result->country_id;
+                }
             }
         }
         
