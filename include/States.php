@@ -69,11 +69,18 @@ class States extends Form {
                 echo '<option value="'.$value[0].'">'.$value[0]."</option>\n";
             }
         }
-        echo "</select>\n";        
+        echo "</select>\n";
+        showError($this->error('state'));
     }
     
     function lookup($name) {
         static $state_id = 0;
+        
+        if (empty($name)) {
+            $this->var_errors['state'] = 'state required';
+            $state_id = 0;
+            return 0;
+        }
         
         if ($state_id === 0) {
             $stmt = $this->authdb->prepare('SELECT state_id FROM states where name = ?;');
@@ -82,7 +89,12 @@ class States extends Form {
             $success = $stmt->execute($vars);
             if ($success === true) {
                 $result = $stmt->fetch(PDO::FETCH_OBJ);
-                $state_id = $result->state_id;
+                if ($result === FALSE) {                    
+                    $this->var_errors['state'] = 'State \''.$name.'\' unrecognized.';
+                    $state_id = 0;
+                } else {
+                    $state_id = $result->state_id;
+                }
             }
         }
         
