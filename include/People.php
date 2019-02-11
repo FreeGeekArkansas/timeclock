@@ -20,6 +20,8 @@ class People extends Form {
     function __construct(PDO &$authdb) {
         $this->authdb =& $authdb;
         $this->variables = array();
+        $this->states = new States($authdb);
+        $this->countries = new Countries($authdb);
     }
     
     function list() {
@@ -78,27 +80,21 @@ class People extends Form {
         }
         
         if ($form_completed_status === true) {
-            
-            // lookup state
-            $states = new States($this->authdb);
-            $state_id = $states->lookup($state = $this->variables['state']);
-            if ($state_id === 0) {
-                $this->var_errors['state'] = 'State \''.$this->variables['state'].'\' unrecognized.';
-                return false;
-            } else {
+            // Performing both lookups first so that error states can be set if needed for display purposes
+            $state_id = $this->states->lookup($this->variables['state']);
+            if ($state_id !== 0) {
                 $this->variables['state_id'] = $state_id;
             }
-
-            // lookup country
-            $countries = new Countries($this->authdb);
-            $country_id = $countries->lookup($country = $this->variables['country']);
-            if ($country_id === 0) {
-                $this->var_errors['country'] = 'Country \''.$this->variables['country'].'\' unrecognized.';
-                return false;
-            } else {
+            
+            $country_id = $this->countries->lookup($this->variables['country']);                        
+            if ($country_id !== 0) {
                 $this->variables['country_id'] = $country_id;
             }
 
+            if ($state_id === 0 || $country_id === 0) {
+                return false;
+            }
+            
             if (isset($this->variables['guardian_first_name']) && !empty($this->variables['guardian_first_name'])) {
                 $stmt = $this->authdb->prepare('INSERT INTO people (first_name,middle_name,last_name,phone,person_type) VALUES (?,?,?,?,?)');
                 $keys = array('guardian_first_name','guardian_middle_name','guardian_last_name','guardian_phone','guardian_type');
@@ -161,7 +157,11 @@ class People extends Form {
                 return true;
             } else {
                 $error = $stmt->errorInfo();
-                $this->var_errors['people'] = $error[0].' '.$error[1].' '.$error[2];
+                if ($error[0] === "23505") {
+                    $this->var_errors['people'] = 'E-mail address already in-use.';
+                } else {
+                    $this->var_errors['people'] = $error[0].' '.$error[1].' '.$error[2];
+                }
                 return false;
             }
         }
@@ -179,4 +179,14 @@ class People extends Form {
         echo '/>';
         showError($this->error($name));
     }
+    
+    function showStateList()
+    {
+        $this->states->showList('class="label" onchange="if (this.selectedIndex==5) showStateOther(); else hideStateOther();"');
+    }
+    
+    function showCountryList()
+    {
+        $this->countries->showList('class="label" onchange="if (this.selectedIndex==5) showCountryOther(); else hideCountryOther();"');
+    }    
 }
