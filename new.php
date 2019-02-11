@@ -23,7 +23,7 @@
     // classes are autoloaded from php files in include/
     $db = new DB();    
     $auth = new Auth($db->authdb);
-    $people = new People($db->authdb);            
+    $people = new People($db->authdb);
     
     if (getRequest('submit') === "apply") {
         $p_success = $people->apply();
@@ -105,19 +105,17 @@ function handleClick(cb) {
     $people->showInput('address2', 'Address Line #2');
     $people->showInput('city', 'City');
     $people->showInput('zipcode', 'Zipcode');
-       
-    $states = new States($db->authdb);
-    $states->showList('class="label" onchange="if (this.selectedIndex==5) showStateOther(); else hideStateOther();"');
+    
+    $people->showStateList();          
     if ($people->get('state') == 'Other') {
-        $people->showInput('state_other', 'State (other)', 'text', false, 'class="label" id=state_other');
+        $people->showInput('state_other', 'State (other)', 'text', true, 'class="label" id=state_other');
     } else {
         $people->showInput('state_other', 'State (other)', 'text', false, 'class="label" id=state_other style="display:none"');
     }
     
-    $countries = new Countries($db->authdb);
-    $countries->showList('class="label" onchange="if (this.selectedIndex==5) showCountryOther(); else hideCountryOther();"');
+    $people->showCountryList();    
     if ($people->get('country') === 'Other') {
-        $people->showInput('country_other', 'Country (other)', 'text', false, 'class="label" id=country_other');
+        $people->showInput('country_other', 'Country (other)', 'text', true, 'class="label" id=country_other');
     } else {
         $people->showInput('country_other', 'Country (other)', 'text', false, 'class="label" id=country_other style="display:none"');
     }
