@@ -105,7 +105,6 @@
      <button type="submit" name="submit" value="Apply" class="btn btn-primary btn-block btn-large">Apply</button>        
     </form>
     <span class="error"><?php echo $q->error('questions'); ?></span>
-	</form>
 </div>
 </body>
 <script></script>
