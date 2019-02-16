@@ -9,7 +9,8 @@ CREATE
             text_answer text,
             bool_answer bool,
             answered_by INT REFERENCES people(person_id),
-            answered_on timestamptz
+            answered_on timestamptz,
+            UNIQUE (question_id,answered_by)
         );
 
 COMMIT;
