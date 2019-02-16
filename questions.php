@@ -74,13 +74,13 @@
             case 'boolean':
                 echo '<div class="nonerror" style="text-align: center">';
                 echo $value['bool_answer'];
-                echo '<b>Yes</b><input type="radio" name='.$value[0].' value=Yes';
-                if ($value['bool_answer'] == true) {
+                echo '<b>Yes</b><input type="radio" name='.$value[0].' value=Yes ';
+                if ($value['bool_answer'] === true) {
                     echo 'checked';
                 }
                 echo " required>\n";
-                echo '<b>No</b><input type="radio" name='.$value[0].' value=No';
-                if ($value['bool_answer'] == false) {
+                echo '<b>No</b><input type="radio" name='.$value[0].' value=No ';
+                if ($value['bool_answer'] === false) {
                     echo 'checked';
                 }
                 echo " required>\n";
