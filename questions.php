@@ -42,16 +42,12 @@
             if ($success === true) {                
                 header('Location: timeclock.php');
                 exit();
-            } else {
-                if ($db->authdb->inTransaction()) {
-                    $db->authdb->rollBack();
-                }
-            }
-        } else {
-            if ($db->authdb->inTransaction()) {
-                $db->authdb->rollBack();
             }
         }
+    }
+    
+    if ($db->authdb->inTransaction()) {
+        $db->authdb->rollBack();
     }    
 }
 ?>
@@ -82,12 +78,12 @@
                 if ($value['bool_answer'] == true) {
                     echo 'checked';
                 }
-                echo ">\n";
+                echo " required>\n";
                 echo '<b>No</b><input type="radio" name='.$value[0].' value=No';
                 if ($value['bool_answer'] == false) {
                     echo 'checked';
                 }
-                echo ">\n";
+                echo " required>\n";
                 echo '<span class="error">'.$q->error($value[0])."</span>\n";
                 echo '</div>';
                 break;
@@ -97,10 +93,8 @@
                 echo '</div>';
                 break;
         }
-        
     }
-    
-}    
+}
 ?>
      <button type="submit" name="submit" value="Apply" class="btn btn-primary btn-block btn-large">Apply</button>        
     </form>
