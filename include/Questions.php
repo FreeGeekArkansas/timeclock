@@ -56,6 +56,16 @@ class Questions extends Form {
         }
         
         if ($form_completed_status === true) {
+            $text_stmt = $this->authdb->prepare('INSERT INTO answers (question_id, text_answer, answered_by, answered_on) VALUES (?,?,?,?);');
+            $bool_stmt = $this->authdb->prepare('INSERT INTO answers (question_id, text_answer, answered_by, answered_on) VALUES (?,?,?,?);');
+            foreach ($keys as $i => $value) {
+//TODO insert answers                 
+//                $this->variables[$value]
+            }
+            // DEBUG
+            print_r($_POST);
+            print_r($keys);            
+            exit;
             $stmt = $this->authdb->prepare('INSERT INTO authentication (person_id,username,password,pin) VALUES (?,?,?,?)');
             $hashed_password = password_hash($this->variables['password'], PASSWORD_DEFAULT, array('cost' => 12));
             $hashed_pin = password_hash($this->variables['pin'], PASSWORD_DEFAULT, array('cost' => 12));
