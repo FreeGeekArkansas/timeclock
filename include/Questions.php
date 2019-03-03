@@ -55,31 +55,34 @@ class Questions extends Form {
             }
         }
         
-        if ($form_completed_status === true) {
-            $text_stmt = $this->authdb->prepare('INSERT INTO answers (question_id, text_answer, answered_by, answered_on) VALUES (?,?,?,?);');
-            $bool_stmt = $this->authdb->prepare('INSERT INTO answers (question_id, text_answer, answered_by, answered_on) VALUES (?,?,?,?);');
+        if ($form_completed_status === true) {            
+            $bool_stmt = $this->authdb->prepare('INSERT INTO answers (question_id, bool_answer, answered_by) VALUES (?,?,?);');
+            $text_stmt = $this->authdb->prepare('INSERT INTO answers (question_id, text_answer, answered_by) VALUES (?,?,?);');
+            
             foreach ($keys as $i => $value) {
-//TODO insert answers                 
-//                $this->variables[$value]
-            }
-            // DEBUG
-            print_r($_POST);
-            print_r($keys);            
-            exit;
-            $stmt = $this->authdb->prepare('INSERT INTO authentication (person_id,username,password,pin) VALUES (?,?,?,?)');
-            $hashed_password = password_hash($this->variables['password'], PASSWORD_DEFAULT, array('cost' => 12));
-            $hashed_pin = password_hash($this->variables['pin'], PASSWORD_DEFAULT, array('cost' => 12));
-            $success = $stmt->execute(array($person_id, $this->variables['username'], $hashed_password, $hashed_pin));
-            if ($success === true) {
-                return true;
-            } else {
-                $error = $stmt->errorInfo();
-                $this->var_errors['auth'] = $error[0].' '.$error[1].' '.$error[2];
-                return false;
+                if (!empty($this->variables[$value])) {
+                    if ($this->questions[$i]["answer_type"] === "boolean") {
+                        $success = $bool_stmt->execute(array($i, $this->variables[$value], $this->person_id));
+                    } else if ($this->questions[$i]["answer_type"] === "text") {
+                        $success = $text_stmt->execute(array($i, $this->variables[$value], $this->person_id));
+                    } else {
+                        print('ERROR: Unexpected answer type.');
+                        print('$i = '.$i.'<br>');
+                        print_r($this->questions);
+                        print_r($this->variables);
+                        return false;                        
+                    }
+                    
+                    if ($success !== true) {
+                        print('ERROR: Error inserting answers.<br>');
+                        $error = $stmt->errorInfo();
+                        $this->var_errors['auth'] = $error[0].' '.$error[1].' '.$error[2];
+                        return false;
+                    }
+                }
             }
         }
-        
-        return $form_completed_status;
+        return true;
     }
     
 }
