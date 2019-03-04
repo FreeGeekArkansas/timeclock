@@ -37,7 +37,7 @@ class Auth extends Form {
     function apply() {
         $keys = array('username','pin','password', 'password2');
         
-        foreach ($keys as $i => $value) {
+        foreach ($keys as $value) {
             $this->variables[$value] = getRequest($value);
         }
         
