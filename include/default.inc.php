@@ -64,7 +64,23 @@ function &getSession($key, $defaultValue = '') {
 
 function authorized() {
     if (getSession('authorized') == true && getSession('person_id') > 0) {
-        return true;
+        $db = new DB();
+        $stmt = $db->authdb->prepare("SELECT count(*) FROM authentication where person_id = :person_id LIMIT 1");        
+        $success = $stmt->execute(array(':person_id' => getSession('person_id')));
+        if ($success === true) {
+            $results = $stmt->fetchObject();
+            if ($results->count === 1) {
+                $stmt->closeCursor();
+                return true;
+            }
+        }
+        $stmt->closeCursor();
+        if (isset($_SESSION['authorized'])) {
+            unset($_SESSION['authorized']);
+        }
+        if (isset($_SESSION['person_id'])) {
+            unset($_SESSION['person_id']);
+        }        
     }
     return false;
 }
