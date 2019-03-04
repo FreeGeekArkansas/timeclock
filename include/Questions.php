@@ -1,4 +1,20 @@
 <?php
+/*
+ Copyright (C) 2019 Jared H. Hudson
+ 
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+ 
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ 
+ You should have received a copy of the GNU General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 class Questions extends Form {        
     function __construct(PDO &$authdb, &$person_id) {
@@ -10,7 +26,7 @@ class Questions extends Form {
         $stmt->bindParam(':person_id', $this->person_id, PDO::PARAM_INT);
         $success = $stmt->execute();
         if ($success === true) {
-            $this->questions = $stmt->fetchAll();            
+            $this->questions = $stmt->fetchAll();
         } else {
             print_r($stmt->errorInfo());
         }
@@ -50,35 +66,33 @@ class Questions extends Form {
             $this->variables[$value] = getRequest($value);
 
             if (empty($this->variables[$value]) && $this->questions[$i]['optional'] == null) {
-                $error = $this->setError($value, 'required');
+                $this->setError($value, 'required');
                 $form_completed_status = false;
             }
         }
         
-        if ($form_completed_status === true) {            
+        if ($form_completed_status === true) {
             $bool_stmt = $this->authdb->prepare('INSERT INTO answers (question_id, bool_answer, answered_by) VALUES (?,?,?);');
             $text_stmt = $this->authdb->prepare('INSERT INTO answers (question_id, text_answer, answered_by) VALUES (?,?,?);');
             
             foreach ($keys as $i => $value) {
-                if (!empty($this->variables[$value])) {
-                    if ($this->questions[$i]["answer_type"] === "boolean") {
-                        $success = $bool_stmt->execute(array($i, $this->variables[$value], $this->person_id));
-                    } else if ($this->questions[$i]["answer_type"] === "text") {
-                        $success = $text_stmt->execute(array($i, $this->variables[$value], $this->person_id));
-                    } else {
-                        print('ERROR: Unexpected answer type.');
-                        print('$i = '.$i.'<br>');
-                        print_r($this->questions);
-                        print_r($this->variables);
-                        return false;                        
-                    }
-                    
-                    if ($success !== true) {
-                        print('ERROR: Error inserting answers.<br>');
-                        $error = $stmt->errorInfo();
-                        $this->var_errors['auth'] = $error[0].' '.$error[1].' '.$error[2];
-                        return false;
-                    }
+                if ($this->questions[$i]["answer_type"] === "boolean") {
+                    $stmt = $bool_stmt;
+                } else if ($this->questions[$i]["answer_type"] === "text") {
+                    $stmt = $text_stmt;
+                } else {
+                    print('ERROR: Unexpected answer type.');
+                    print('$i = '.$i.'<br>');
+                    print('$value = '.$value.'<br>');
+                    print_r($this->questions);
+                    print_r($this->variables);
+                    return false;                        
+                }
+                $success = $stmt->execute(array($value, $this->variables[$value], $this->person_id));
+                if ($success !== true) {
+                    print('<b>ERROR: Error inserting answers.</b><br>');
+                    print_r($stmt->errorInfo());
+                    return false;
                 }
             }
         }
