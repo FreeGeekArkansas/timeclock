@@ -37,7 +37,7 @@ class Auth extends Form {
     function apply() {
         $keys = array('username','pin','password', 'password2');
         
-        foreach ($keys as $i => $value) {
+        foreach ($keys as $value) {
             $this->variables[$value] = getRequest($value);
         }
         
@@ -102,15 +102,19 @@ class Auth extends Form {
             if (password_verify($password, $row['password'])) {
                 $stmt->closeCursor();
                 $_SESSION['password_used'] = true;
+                $_SESSION['pin_used'] = false;
                 $_SESSION['authorized'] = true;
                 $_SESSION['person_id'] = $row['person_id'];
+                $_SESSION['username'] = $row['username'];
                 return true;
             }
             if (password_verify($password, $row['pin'])) {
                 $stmt->closeCursor();
+                $_SESSION['password_used'] = false;
                 $_SESSION['pin_used'] = true;
                 $_SESSION['authorized'] = true;
                 $_SESSION['person_id'] = $row['person_id'];
+                $_SESSION['username'] = $row['username'];
                 return true;
             }            
         }
