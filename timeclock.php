@@ -29,7 +29,7 @@
     $purposes = new Purposes($db->authdb);
     $tc = new Timeclock($db->authdb, getSession('person_id'));
     $clocked_in = $tc->status(1);
-    
+
     if (!$clocked_in && getRequest('submit') === "Clock-In") {
         $tc->clockin();
     } else if (getRequest('submit') === "Clock-Out") {
@@ -82,9 +82,6 @@
 	<?php } ?>
 <?php } ?>
     </table>
-    
-    
-    
     </form>
     <span class="error"><?php echo $tc->error('questions'); ?></span>
 </div>
