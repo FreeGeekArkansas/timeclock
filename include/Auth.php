@@ -102,15 +102,19 @@ class Auth extends Form {
             if (password_verify($password, $row['password'])) {
                 $stmt->closeCursor();
                 $_SESSION['password_used'] = true;
+                $_SESSION['pin_used'] = false;
                 $_SESSION['authorized'] = true;
                 $_SESSION['person_id'] = $row['person_id'];
+                $_SESSION['username'] = $row['username'];
                 return true;
             }
             if (password_verify($password, $row['pin'])) {
                 $stmt->closeCursor();
+                $_SESSION['password_used'] = false;
                 $_SESSION['pin_used'] = true;
                 $_SESSION['authorized'] = true;
                 $_SESSION['person_id'] = $row['person_id'];
+                $_SESSION['username'] = $row['username'];
                 return true;
             }            
         }
