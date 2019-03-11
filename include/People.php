@@ -153,7 +153,7 @@ class People extends Form {
             $success = $stmt->execute();
             
             if ($success === true) {
-                $_SESSION['person_id'] = $this->authdb->lastInsertId('people_person_id_seq');                
+                $_SESSION['person_id'] = $this->authdb->lastInsertId('people_person_id_seq');
                 return true;
             } else {
                 $error = $stmt->errorInfo();
