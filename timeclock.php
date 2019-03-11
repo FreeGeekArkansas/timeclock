@@ -15,30 +15,31 @@
  You should have received a copy of the GNU General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 {
     include_once 'include/default.inc.php';
     session_start();
 
     // If user is not already logged in then take them to login page
-    if (authorized() == false) {         
+    if (authorized() == false) {
         header('Location: index.php');
         exit();
     }
 
     $db = new DB();
+    $purposes = new Purposes($db->authdb);
     $tc = new Timeclock($db->authdb, getSession('person_id'));
-
-    if (getRequest('submit') === "Clock-In") {
+    $clocked_in = $tc->status(1);
+    
+    if (!$clocked_in && getRequest('submit') === "Clock-In") {
         $tc->clockin();
-    } else if (getRequest('submit') === "Clock-In") {
+    } else if (getRequest('submit') === "Clock-Out") {
         $tc->clockout();
     }
-    $status = $tc->status();
-    
+    $clocked_in = $tc->status(20);
+
     if ($db->authdb->inTransaction()) {
-        $db->authdb->rollBack();
-    }    
+        $db->authdb->commit();
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -51,15 +52,39 @@
 <script></script>
 <body>
 <a href="logout.php" class="btn btn-primary btn-block btn-large" style="width: 250px">Log out</a>
-<div class="newbox">
-<h2>Timeclock</h2>
-	
+<div class="timeclockbox">
+<h2><?php echo $_SESSION['username']; ?>'s Timeclock</h2>
     <form method="post" enctype="application/x-www-form-urlencoded" action="timeclock.php">
-    <?php if ($status === 'clocked in') { ?>
-    	<button type="submit" name="submit" value="Clock-Out" class="btn btn-primary btn-block btn-large">Clock-Out</button>
-    	<?php } else { ?>
-    	<button type="submit" name="submit" value="Clock-In" class="btn btn-primary btn-block btn-large">Clock-In</button>
-    	<?php } ?>        
+    <table>
+    	<tr><td>Clock-In</td><td>Clock-Out</td><td>Length</td><td>Purpose</td><td>Action</td></tr>
+<?php if (!$clocked_in) { ?>
+    	<tr>
+    	<td></td>
+    	<td></td>
+    	<td></td>
+    	<td><?php $purposes->showList(); ?></td>
+    	<td><button type="submit" name="submit" value="Clock-In" class="btn btn-primary btn-block btn-large">Clock-In</button></td>
+		</tr>
+<?php } ?>
+<?php foreach ($tc->timeclock as $i => $entry) { ?> 
+    	<tr>
+    	<td><?php echo $entry['clock_in']; ?></td>
+    	<td><?php echo $entry['clock_out']; ?></td>
+    	<td><?php echo $entry['length']; ?></td>
+    	
+	<?php if ($i === 0 && $clocked_in) { ?>
+	    <td><?php echo $entry['purpose']; ?></td>
+    	<td><button type="submit" name="submit" value="Clock-Out" class="btn btn-primary btn-block btn-large">Clock-Out</button></td>
+    
+	<?php } else { ?>
+	    <td><?php echo $entry['purpose']; ?></td>
+    	<td></td>
+	<?php } ?>
+<?php } ?>
+    </table>
+    
+    
+    
     </form>
     <span class="error"><?php echo $tc->error('questions'); ?></span>
 </div>
