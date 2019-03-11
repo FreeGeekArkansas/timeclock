@@ -64,9 +64,9 @@ class Timeclock extends Form {
     	$clocked_in = $this->status();
     	if ($clocked_in) {
     		$timeclock_id = $this->timeclock[0]['timeclock_id'];
-    		
-    		$stmt = $this->authdb->prepare('UPDATE timeclock SET (clock_out) = (\'now\') WHERE timeclock_id = ?;');
-    		$success = $stmt->execute(array($timeclock_id));
+    		$stmt = $this->authdb->prepare('UPDATE timeclock SET clock_out = \'now\' WHERE timeclock_id = :timeclock_id;');
+    		$stmt->bindParam(':timeclock_id', (int)$timeclock_id, PDO::PARAM_INT);
+    		$success = $stmt->execute();
     		
     		if ($success !== true) {
     			print('<b>ERROR: Error in clockout.</b><br>');
