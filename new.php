@@ -1,6 +1,6 @@
 <?php
 /*
- Copyright (C) 2018  Jared H. Hudson
+ Copyright (C) 2018-2019  Jared H. Hudson
  
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -38,20 +38,19 @@
         $a_success = $auth->apply();
         
         if ($p_success && $a_success) {
-            $success = $db->commit();
+        	$success = $db->commit();
             if ($success === true) {
-                $_SESSION['authorized'] = true;
-                header('Location: questions.php');
-                exit();
-            } else {
-                if ($db->authdb->inTransaction()) {
-                    $db->authdb->rollBack();
-                }
+	           	$_SESSION['password_used'] = true;
+            	$_SESSION['pin_used'] = true;
+            	$_SESSION['authorized'] = true;
+            	$_SESSION['username'] = getRequest('username');
+           		header('Location: questions.php');
+           		exit();
             }
-        } else {
-            if ($db->authdb->inTransaction()) {
-                $db->authdb->rollBack();
-            }
+        }
+        
+        if ($db->authdb->inTransaction()) {
+        	$db->authdb->rollBack();
         }
     }
 }
