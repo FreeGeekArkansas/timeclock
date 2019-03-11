@@ -23,6 +23,13 @@
     width:600px;
     height:400px;
 }
+.timeclockbox { 
+    position: absolute;
+    left: 50%;
+    margin: 0 0 0 -500px;
+    width:1000px;
+    height:400px;
+}
 .search { 
 	margin: 10% 10% 10% 10%;
 	width: 80%;	
