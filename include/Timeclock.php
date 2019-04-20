@@ -1,45 +1,72 @@
 <?php
 /*
  Copyright (C) 2019 Jared H. Hudson
- 
+
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
  the Free Software Foundation, either version 3 of the License, or
  (at your option) any later version.
- 
+
  This program is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU General Public License for more details.
- 
+
  You should have received a copy of the GNU General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 class Timeclock extends Form {
-    function __construct(PDO &$authdb, &$person_id) {
+    function __construct(PDO &$authdb, &$person_id = NULL) {
         $this->authdb = &$authdb;
         $this->person_id = &$person_id;
         $this->timeclock = Array();
     }
 
     function status($limit = 'ALL', $offset = 0) {
-    	if (is_numeric($limit)) {
-        	$stmt = $this->authdb->prepare("SELECT date_trunc('seconds',t.clock_in)::timestamp as clock_in,date_trunc('seconds',t.clock_out)::timestamp as clock_out,p.purpose,date_trunc('seconds', age(t.clock_out,t.clock_in)) as length FROM timeclock as t,purposes as p WHERE person_id=:person_id and t.purpose_id = p.purpose_id ORDER BY person_id, clock_in DESC limit :limit OFFSET :offset;");
-        	$stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
-    	} else {
-			$stmt = $this->authdb->prepare('SELECT t.*,p.purpose,date_trunc(\'seconds\', age(t.clock_out,t.clock_in)) as length FROM timeclock as t,purposes as p WHERE person_id=:person_id and t.purpose_id = p.purpose_id ORDER BY person_id, clock_in DESC OFFSET :offset;');
-    	}
+        if (is_numeric($limit)) {
+            $stmt = $this->authdb->prepare("SELECT date_trunc('seconds',t.clock_in)::timestamp as clock_in,date_trunc('seconds',t.clock_out)::timestamp as clock_out,p.purpose,date_trunc('seconds', age(t.clock_out,t.clock_in)) as length FROM timeclock as t,purposes as p WHERE person_id=:person_id and t.purpose_id = p.purpose_id ORDER BY person_id, clock_in DESC limit :limit OFFSET :offset;");
+            $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
+        } else {
+            $stmt = $this->authdb->prepare('SELECT t.*,p.purpose,date_trunc(\'seconds\', age(t.clock_out,t.clock_in)) as length FROM timeclock as t,purposes as p WHERE person_id=:person_id and t.purpose_id = p.purpose_id ORDER BY person_id, clock_in DESC OFFSET :offset;');
+        }
         $stmt->bindParam(':person_id', $this->person_id, PDO::PARAM_INT);
         $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
         $success = $stmt->execute();
         if ($success === true) {
-        	if ($stmt->rowCount()) {
-        		$this->timeclock = $stmt->fetchAll();
-        		if (!empty($this->timeclock[0]['clock_in']) && empty($this->timeclock[0]['clock_out'])) {
-        			return true;
-        		}
-        	}
+            if ($stmt->rowCount()) {
+                $this->timeclock = $stmt->fetchAll();
+                if (!empty($this->timeclock[0]['clock_in']) && empty($this->timeclock[0]['clock_out'])) {
+                    return true;
+                }
+            }
+        } else {
+            print_r($stmt->errorInfo());
+        }
+        $stmt->closeCursor();
+        return false;
+    }
+
+    /* This function, `statusAll`, should give a list of all the signed in people in the
+     * application. This data will be used as the main data seen when
+     * navigating to the timeclock site.
+     */
+    function statusAll($limit = 'ALL', $offset = 0) {
+        if (is_numeric($limit)) {
+            $stmt = $this->authdb->prepare("SELECT people.first_name as first_name,people.last_name as last_name,date_trunc('seconds',t.clock_in)::timestamp as clock_in,date_trunc('seconds',t.clock_out)::timestamp as clock_out,p.purpose as purpose FROM purposes as p, timeclock as t LEFT OUTER JOIN people USING (person_id) WHERE t.clock_out is NULL AND (t.purpose_id = p.purpose_id) ORDER BY clock_in DESC limit :limit OFFSET :offset;")
+            $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
+        } else {
+            $stmt = $this->authdb->prepare('SELECT people.first_name as first_name,people.last_name as last_name,date_trunc('seconds',t.clock_in)::timestamp as clock_in,date_trunc('seconds',t.clock_out)::timestamp as clock_out,p.purpose as purpose FROM purposes as p, timeclock as t LEFT OUTER JOIN people USING (person_id) WHERE t.clock_out is NULL AND (t.purpose_id = p.purpose_id) ORDER BY clock_in DESC OFFSET :offset;')
+        }
+        $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
+
+        if ($success === true) {
+            if ($stmt->rowCount()) {
+                $this->clockedin_people = $stmt->fetchAll();
+                if (!empty($this->timeclock[0]['clock_in']) && empty($this->timeclock[0]['clock_out'])) {
+                    return true;
+                }
+            }
         } else {
             print_r($stmt->errorInfo());
         }
@@ -48,34 +75,34 @@ class Timeclock extends Form {
     }
 
     function clockin() {
-    	$purpose_id = getRequest('purpose_id', 1);
+        $purpose_id = getRequest('purpose_id', 1);
         $stmt = $this->authdb->prepare('INSERT INTO timeclock (clock_in, purpose_id, person_id) VALUES (\'now\',?,?);');
         $success = $stmt->execute(array($purpose_id, $this->person_id));
         if ($success !== true) {
-        	print('<b>ERROR: Error in clockin.</b><br>');
-        	print_r($stmt->errorInfo());
-        	return false;
+            print('<b>ERROR: Error in clockin.</b><br>');
+            print_r($stmt->errorInfo());
+            return false;
         }
-        
+
         return true;
     }
 
     function clockout() {
-    	$clocked_in = $this->status();
-    	if ($clocked_in) {
-    		$timeclock_id = $this->timeclock[0]['timeclock_id'];
-    		$stmt = $this->authdb->prepare('UPDATE timeclock SET clock_out = \'now\' WHERE timeclock_id = :timeclock_id;');
-    		$stmt->bindParam(':timeclock_id', (int)$timeclock_id, PDO::PARAM_INT);
-    		$success = $stmt->execute();
-    		
-    		if ($success !== true) {
-    			print('<b>ERROR: Error in clockout.</b><br>');
-    			print_r($stmt->errorInfo());
-    			return false;
-    		}
-    		return true;
-    	}
-    	return false;
+        $clocked_in = $this->status();
+        if ($clocked_in) {
+            $timeclock_id = $this->timeclock[0]['timeclock_id'];
+            $stmt = $this->authdb->prepare('UPDATE timeclock SET clock_out = \'now\' WHERE timeclock_id = :timeclock_id;');
+            $stmt->bindParam(':timeclock_id', (int)$timeclock_id, PDO::PARAM_INT);
+            $success = $stmt->execute();
+
+            if ($success !== true) {
+                    print('<b>ERROR: Error in clockout.</b><br>');
+                    print_r($stmt->errorInfo());
+                    return false;
+            }
+            return true;
+        }
+        return false;
     }
 
     function apply() {
@@ -122,5 +149,4 @@ class Timeclock extends Form {
         }
         return true;
     }
-
 }
