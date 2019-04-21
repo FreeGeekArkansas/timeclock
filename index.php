@@ -22,7 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     // class is autoloaded from include/Auth.php
     $db = new DB();
 
-    $tc = new TimeClock($db->authdb);
+    $tc = new Timeclock($db->authdb);
     $tc_req = $tc->statusAll();
 }
 ?>
