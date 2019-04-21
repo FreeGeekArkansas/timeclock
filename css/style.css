@@ -304,7 +304,7 @@ table {
 
 /* Per Page global footer block, pegged to bottom */
 #footer {
-    background: lime;
+    background-color: #363636;
 }
 
 #login_btn {
