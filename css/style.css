@@ -1,11 +1,16 @@
 /* prepare for the Open Sans stylings */
 @import url(family_Open_Sans.css);
 
-/* set the body tag first, it's global */
+html {
+    height: 100%;
+    margin: 0; padding: 0;
+}
+
 body {
     /* save some room cause window managers don't */
-    width: 99%;
+    width: 100%;
     height:100%;
+    margin: 0; padding: 0;
     font-family: 'Open Sans', sans-serif;
     padding-right: 0.5em;
     background: #092756;
