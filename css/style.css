@@ -1,12 +1,20 @@
+/* prepare for the Open Sans stylings */
 @import url(family_Open_Sans.css);
+
+/* basic buttons, stay generic, font size by the pt, try to avoid
+ * px units where possible... prefer ems and % gradients be damned!!!
+ */
 .btn {
+    /* block out buttons, wrap as needed */
     display: inline-block;
    *display: inline;
    *zoom: 1;
-    padding: 4px 10px 4px;
-    margin-bottom: 0;
-    font-size: 13px;
-    line-height: 18px; color: #333333;
+   /* use pt for font size as it is device independent (DPI doesn't matter) */
+    font-size: 12pt;
+   /* give room to breathe top rl bot in ems, predicated on `font-size` */
+    padding: 1em 3em 1em;
+    line-height:  1.5em;
+    color: #333333;
     text-align: center;
     text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
     vertical-align: middle;
@@ -272,3 +280,8 @@ table {
     outline-color: red;
 }
 
+/* By id */
+#login_btn {
+    /* put the button on the right */
+    float: right;
+}
