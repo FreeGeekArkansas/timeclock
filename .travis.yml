@@ -1,0 +1,19 @@
+language: php
+
+services:
+  - postgresql
+
+before_install:
+  - psql -c 'create database timeclock;' -U postgres
+
+install:
+  - sqitch -u postgres -d postgres --top-dir sqitch deploy
+
+script:
+  - sqitch -u postgres -d postgres --top-dir sqitch verify
+
+addons:
+  apt:
+    update: true
+    packages:
+      - sqitch
