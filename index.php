@@ -30,6 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <html class="home">
 <head>
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <link href="css/style.css" rel="stylesheet" type="text/css">
 <title>Time Clock Status</title>
 </head>
