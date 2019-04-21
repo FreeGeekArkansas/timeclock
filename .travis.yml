@@ -15,7 +15,10 @@ script:
   - cd sqitch; sqitch --engine pg -u postgres -d timeclock verify
 
 addons:
+  postgresql: "10"
   apt:
     update: true
     packages:
+      - postgresql-10
+      - postgresql-client-10
       - sqitch
