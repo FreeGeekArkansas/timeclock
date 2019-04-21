@@ -35,43 +35,49 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <title>Time Clock Status</title>
 </head>
 <body>
-<div class="main-container">
-    <div id="login_btn">
-        <a href="login.php" class="btn btn-primary"
-            style="text-decoration=none;">Login</a>
+<div id="main_container">
+    <div id="header">
+        <div id="login_btn">
+            <a href="login.php" class="btn btn-primary"
+                style="text-decoration=none;">Login</a>
+        </div>
+        <h1>Who is here?</h1>
     </div>
-    <h1>Who is here?</h1>
-    <div class="status-list">
-        <table id="clockedin_people">
+    
+    <div id="body">
+        <div class="status-list">
+            <table id="clockedin_people">
 <?php
-        // Generate the table of logged in folks
-        if ($tc_req) {
-?>
-            <tr>
-                <th>Who</th>
-                <th>When</th>
-                <th>Why</th>
-                <th>How Long</th>
-           <!-- <th>With What</th> !-->
-<?php
-            foreach ($tc->clockedin_people as $i => $entry) {
+            // Generate the table of logged in folks
+            if ($tc_req) {
 ?>
                 <tr>
-                    <td><?php echo $entry['first_name']; echo ' '; echo $entry['last_name']; ?></td>
-                    <td><?php echo $entry['clock_in']; ?></td>
-                    <td><?php echo $entry['purpose']; ?></td>
-                    <td><?php echo ''; ?></td>
-               <!-- <td>With What</td> !-->
+                    <th>Who</th>
+                    <th>When</th>
+                    <th>Why</th>
+                    <th>How Long</th>
+               <!-- <th>With What</th> !-->
+<?php
+                foreach ($tc->clockedin_people as $i => $entry) {
+?>
+                    <tr>
+                        <td><?php echo $entry['first_name']; echo ' '; echo $entry['last_name']; ?></td>
+                        <td><?php echo $entry['clock_in']; ?></td>
+                        <td><?php echo $entry['purpose']; ?></td>
+                        <td><?php echo ''; ?></td>
+                   <!-- <td>With What</td> !-->
+<?php
+                }
+            } else {
+?>
+                <tr><th><h2>No one is currently clocked in!</h2></th>
 <?php
             }
-        } else {
 ?>
-            <tr><th><h2>No one is currently clocked in!</h2></th>
-<?php
-        }
-?>
-        </table>
+            </table>
+        </div>
     </div>
+    <div id="footer">Copyright Free Geek of Arkansas 2019</div>
 </div>
 </body>
 </html>

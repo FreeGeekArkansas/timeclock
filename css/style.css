@@ -289,16 +289,29 @@ table {
     outline-color: red;
 }
 
-/* By id */
+/* Best when used on every page before layouts */
+#main_container {
+    display: flex;
+    min-height: 100%;
+    flex-direction: column;
+}
+
+/* Put your H1's here */
+#header {
+    height: 2em;
+}
+
+#body {
+    flex: 1;
+}
+
+/* Per Page global footer block, pegged to bottom */
+#footer {
+    background: lime;
+}
+
 #login_btn {
     /* put the button on the right */
     float: right;
 }
 
-/* Per Page global footer block, pegged to bottom */
-#footer {
-    clear: both;
-    position: relative;
-    height: 2em;
-    margin-top: 2em;
-}
