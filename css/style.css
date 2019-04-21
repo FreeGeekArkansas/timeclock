@@ -4,7 +4,7 @@
 /* set the body tag first, it's global */
 body {
     /* save some room cause window managers don't */
-    width: 90%;
+    width: 99%;
     height:100%;
     font-family: 'Open Sans', sans-serif;
     background: #092756;
@@ -287,4 +287,12 @@ table {
 #login_btn {
     /* put the button on the right */
     float: right;
+}
+
+/* Per Page global footer block, pegged to bottom */
+#footer {
+    clear: both;
+    position: relative;
+    height: 2em;
+    margin-top: 2em;
 }
