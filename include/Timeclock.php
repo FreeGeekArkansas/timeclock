@@ -64,9 +64,7 @@ class Timeclock extends Form {
         if ($success === true) {
             if ($stmt->rowCount()) {
                 $this->clockedin_people = $stmt->fetchAll();
-                if (!empty($this->timeclock[0]['clock_in']) && empty($this->timeclock[0]['clock_out'])) {
-                    return true;
-                }
+                return true;
             }
         } else {
             print_r($stmt->errorInfo());
