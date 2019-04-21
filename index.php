@@ -43,40 +43,43 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </div>
         <h1>Who is here?</h1>
     </div>
-    
+
     <div id="body">
-        <div class="status-list">
-            <table id="clockedin_people">
+        <table>
 <?php
-            // Generate the table of logged in folks
-            if ($tc_req) {
+        // Generate the table of logged in folks
+        if ($tc_req) {
+?>
+            <tr>
+                <th>Who</th>
+                <th>When</th>
+                <th>Why</th>
+                <th>How Long</th>
+           <!-- <th>With What</th> !-->
+<?php
+            foreach ($tc->clockedin_people as $i => $entry) {
+                $interval = new DateInterval($entry['since_clockedin'] . 's');
+                $since = $interval->format('%h hours, %m minutes')
+
 ?>
                 <tr>
-                    <th>Who</th>
-                    <th>When</th>
-                    <th>Why</th>
-                    <th>How Long</th>
-               <!-- <th>With What</th> !-->
+                    <td><?php echo $entry['first_name']; echo ' '; echo $entry['last_name']; ?></td>
+                    <td><?php echo $entry['clock_in']; ?></td>
+                    <td><?php echo $entry['purpose']; ?></td>
 <?php
-                foreach ($tc->clockedin_people as $i => $entry) {
-?>
-                    <tr>
-                        <td><?php echo $entry['first_name']; echo ' '; echo $entry['last_name']; ?></td>
-                        <td><?php echo $entry['clock_in']; ?></td>
-                        <td><?php echo $entry['purpose']; ?></td>
-                        <td><?php echo ''; ?></td>
-                   <!-- <td>With What</td> !-->
-<?php
-                }
-            } else {
-?>
-                <tr><th><h2>No one is currently clocked in!</h2></th>
+                    <td><?php echo $since; ?></td>
+               <!-- <td>With What</td> !-->
 <?php
             }
+        } else {
 ?>
-            </table>
-        </div>
+            <tr><th><h2>No one is currently clocked in!</h2></th>
+<?php
+        }
+?>
+        </table>
     </div>
+
     <div id="footer">Copyright Free Geek of Arkansas 2019</div>
 </div>
 </body>
