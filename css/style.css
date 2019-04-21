@@ -1,7 +1,7 @@
 /* prepare for the Open Sans stylings */
 @import url(family_Open_Sans.css);
 
-html {
+html,body {
     height: 100%;
     margin: 0; padding: 0;
 }
@@ -9,10 +9,7 @@ html {
 body {
     /* save some room cause window managers don't */
     width: 100%;
-    height:100%;
-    margin: 0; padding: 0;
     font-family: 'Open Sans', sans-serif;
-    padding-right: 0.5em;
     background: #092756;
     background: -moz-radial-gradient(0% 100%, ellipse cover, rgba(104,128,138,.4) 10%,rgba(138,114,76,0) 40%),-moz-linear-gradient(top,  rgba(57,173,219,.25) 0%, rgba(42,60,87,.4) 100%), -moz-linear-gradient(-45deg,  #670d10 0%, #092756 100%);
     background: -webkit-radial-gradient(0% 100%, ellipse cover, rgba(104,128,138,.4) 10%,rgba(138,114,76,0) 40%), -webkit-linear-gradient(top,  rgba(57,173,219,.25) 0%,rgba(42,60,87,.4) 100%), -webkit-linear-gradient(-45deg,  #670d10 0%,#092756 100%);
