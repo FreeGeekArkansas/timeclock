@@ -1,9 +1,15 @@
+sudo: required
 language: php
+php: 7.2
 
 services:
   - postgresql
+postgresql: 10
 
 before_install:
+  - sudo add-apt-repository universe
+  - sudo apt update
+  - sudo apt install -y sqitch
   - psql -c 'create database timeclock;' -U postgres
 
 install:
@@ -15,5 +21,3 @@ script:
 addons:
   apt:
     update: true
-    packages:
-      - sqitch
