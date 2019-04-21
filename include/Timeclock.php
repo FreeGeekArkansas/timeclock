@@ -53,10 +53,10 @@ class Timeclock extends Form {
      */
     function statusAll($limit = 'ALL', $offset = 0) {
         if (is_numeric($limit)) {
-            $stmt = $this->authdb->prepare("SELECT people.first_name as first_name,people.last_name as last_name,date_trunc('seconds',t.clock_in)::timestamp as clock_in,date_trunc('seconds',t.clock_out)::timestamp as clock_out,p.purpose as purpose FROM purposes as p, timeclock as t LEFT OUTER JOIN people USING (person_id) WHERE t.clock_out is NULL AND (t.purpose_id = p.purpose_id) ORDER BY clock_in DESC limit :limit OFFSET :offset;");
+            $stmt = $this->authdb->prepare("SELECT people.first_name as first_name,people.last_name as last_name,date_trunc('seconds',t.clock_in)::timestamp as clock_in,date_trunc('seconds',t.clock_out)::timestamp as clock_out,p.purpose as purpose, date_trunc('seconds', age(now(),t.clock_in)) as since_clockedin FROM purposes as p, timeclock as t LEFT OUTER JOIN people USING (person_id) WHERE t.clock_out is NULL AND (t.purpose_id = p.purpose_id) ORDER BY clock_in DESC limit :limit OFFSET :offset;");
             $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
         } else {
-            $stmt = $this->authdb->prepare("SELECT people.first_name as first_name,people.last_name as last_name,date_trunc('seconds',t.clock_in)::timestamp as clock_in,date_trunc('seconds',t.clock_out)::timestamp as clock_out,p.purpose as purpose FROM purposes as p, timeclock as t LEFT OUTER JOIN people USING (person_id) WHERE t.clock_out is NULL AND (t.purpose_id = p.purpose_id) ORDER BY clock_in DESC OFFSET :offset;");
+            $stmt = $this->authdb->prepare("SELECT people.first_name as first_name,people.last_name as last_name,date_trunc('seconds',t.clock_in)::timestamp as clock_in,date_trunc('seconds',t.clock_out)::timestamp as clock_out,p.purpose as purpose, date_trunc('seconds', age(now(),t.clock_in)) as since_clockedin FROM purposes as p, timeclock as t LEFT OUTER JOIN people USING (person_id) WHERE t.clock_out is NULL AND (t.purpose_id = p.purpose_id) ORDER BY clock_in DESC OFFSET :offset;");
         }
         $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
         $success = $stmt->execute();
