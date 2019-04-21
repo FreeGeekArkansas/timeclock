@@ -9,10 +9,10 @@ before_install:
   - psql -c 'create database timeclock;' -U postgres
 
 install:
-  - cd sqitch; sqitch --engine pg -u postgres -d postgres deploy
+  - cd sqitch; sqitch --engine pg -u postgres -d timeclock deploy
 
 script:
-  - cd sqitch; sqitch --engine pg -u postgres -d postgres verify
+  - cd sqitch; sqitch --engine pg -u postgres -d timeclock verify
 
 addons:
   apt:
