@@ -66,7 +66,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     <td><?php echo $entry['first_name']; echo ' '; echo $entry['last_name']; ?></td>
                     <td><?php echo $entry['clock_in']; ?></td>
                     <td><?php echo $entry['purpose']; ?></td>
-<?php
                     <td><?php echo $since; ?></td>
                <!-- <td>With What</td> !-->
 <?php
