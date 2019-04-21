@@ -37,7 +37,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <body>
 <div class="main-container">
     <div id="login_btn">
-        <a href="login.php" class="btn"
+        <a href="login.php" class="btn btn-primary"
             style="text-decoration=none;">Login</a>
     </div>
     <h1>Who is here?</h1>
