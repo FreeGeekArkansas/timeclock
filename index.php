@@ -36,7 +36,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </head>
 <body>
 <div class="main-container">
-    <div class="btn btn-primary"><a href="login.php">Login</a></div>
+    <div id="login_btn" class="btn btn-primary"><a href="login.php">Login</a></div>
     <h1>Who is here?</h1>
     <div class="status-list">
         <table id="clockedin_people">
@@ -46,15 +46,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ?>
             <tr>
                 <th>Who</th>
-                <th>What</th>
                 <th>When</th>
+                <th>Why</th>
+                <th>How Long</th>
+            <!--<th>With What</th>
 <?php
             foreach ($tc->clockedin_people as $i => $entry) {
 ?>
                 <tr>
                     <td><?php echo $entry['first_name']; echo ' '; echo $entry['last_name']; ?></td>
-                    <td><?php echo $entry['purpose']; ?></td>
                     <td><?php echo $entry['clock_in']; ?></td>
+                    <td><?php echo $entry['purpose']; ?></td>
+                    <td><?php echo $entry['']; ?></td>
 <?php
             }
         } else {
