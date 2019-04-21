@@ -36,7 +36,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </head>
 <body>
 <div class="main-container">
-    <div id="login_btn"><a href="login.php" class="btn btn-primary">Login</a></div>
+    <div id="login_btn"><a href="login.php" class="btn">Login</a></div>
     <h1>Who is here?</h1>
     <div class="status-list">
         <table id="clockedin_people">
