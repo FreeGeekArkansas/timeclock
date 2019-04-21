@@ -58,15 +58,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
            <!-- <th>With What</th> !-->
 <?php
             foreach ($tc->clockedin_people as $i => $entry) {
-                $interval = new DateInterval($entry['since_clockedin'] . 's');
-                $since = $interval->format('%h hours, %m minutes')
-
 ?>
                 <tr>
                     <td><?php echo $entry['first_name']; echo ' '; echo $entry['last_name']; ?></td>
                     <td><?php echo $entry['clock_in']; ?></td>
                     <td><?php echo $entry['purpose']; ?></td>
-                    <td><?php echo $since; ?></td>
+                    <td><?php echo $entry['since_clockedin']; ?></td>
                <!-- <td>With What</td> !-->
 <?php
             }
