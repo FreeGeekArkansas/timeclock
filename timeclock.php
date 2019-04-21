@@ -21,7 +21,7 @@
 
     // If user is not already logged in then take them to login page
     if (authorized() == false) {
-        header('Location: index.php');
+        header('Location: login.php');
         exit();
     }
 

@@ -79,7 +79,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <body>
 <div class="loginbox">
     <h1>Time clock</h1>
-    <form method="post" enctype="application/x-www-form-urlencoded" action="index.php">
+    <form method="post" enctype="application/x-www-form-urlencoded" action="login.php">
         <input  type="text"     name="username" placeholder="Username" class="login"
             value="<?php echo $username; ?>" required="required" /><?php showError($username_error); ?>
         <input  type="password" name="password" placeholder="PIN or Password"

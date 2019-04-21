@@ -30,6 +30,6 @@
 <body>
 <h3 class="nonerror">In order to comply with <a class="nonerror" href="http://www.coppa.org">COPPA</a> (Children's Online Privacy Protection Act) we cannot collect personal information from an individual under the age of <?php echo $coppa_age; ?>.
 A parent or guardian must provide consent for us to store the name, date of birth, address, email address of anyone under the age of <?php echo $coppa_age; ?>. Please email us at <a class="nonerror" href="mailto:<?php echo $contact_email; ?>"><?php echo $contact_email; ?></a> or call us at <?php echo $contact_phone; ?> for more information.</h3>
-<a class="nonerror" href="index.php"><span class="noerror">Return to login page</span></a>
+<a class="nonerror" href="index.php"><span class="noerror">Return to home page</span></a>
 </body>
 </html>
