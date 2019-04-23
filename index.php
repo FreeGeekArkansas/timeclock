@@ -44,7 +44,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <h1>Who is here?</h1>
     </div>
 
-    <div id="body">
+    <div id="currentusers">
         <table>
 <?php
         // Generate the table of logged in folks

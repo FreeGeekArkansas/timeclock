@@ -298,6 +298,11 @@ table {
     height: 5em;
 }
 
+#currentusers {
+    flex: 1;
+    padding: 0 15px;
+}
+
 #body {
     flex: 1;
 }
