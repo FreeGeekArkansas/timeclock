@@ -226,14 +226,16 @@ class People extends Form {
         // Failed to complete form correctly
         return false;
     }
-    function find($email, $username) {
-        $stmt = $this->authdb->query("select p.email,a.username from people as p inner join authentication as a using (person_id) where email = :email or username = :username;");
-        $stmt->bindValue(':email', $email);
-        $stmt->bindValue(':username', $username);
+    function find($email='', $username='') {
+        $stmt = $this->authdb->prepare("select p.email,a.username from people as p inner join authentication as a using (person_id) where email = :email or username = :username;");
+
         if ($stmt !== false) {
+            $stmt->bindValue(':email', $email);
+            $stmt->bindValue(':username', $username);
             $results = $stmt->fetchAll();
             $stmt->closeCursor();
         } else {
+            
             $results = false;
         }
 
